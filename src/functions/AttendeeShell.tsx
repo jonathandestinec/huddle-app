@@ -4,6 +4,7 @@ import { useState, useTransition } from "react";
 import { Button, Input } from "@/components/ui";
 import { startPaidUnlockAction, unlockFreeAction, unlockWithCodeAction } from "@/lib/gating/actions";
 import { formatNaira } from "@/lib/money";
+import { playSound } from "@/lib/sound";
 import { useIdentity } from "./IdentifySheet";
 import type { Gate } from "./types";
 
@@ -46,11 +47,15 @@ export function AttendeeShell({
     if (!(await ensureIdentity())) return;
     start(async () => {
       const r = await fnc();
-      if (!r.ok) return setError(r.error);
+      if (!r.ok) {
+        playSound("bonk");
+        return setError(r.error);
+      }
       if ("data" in r && r.data?.authorizationUrl) {
         window.location.href = r.data.authorizationUrl;
         return;
       }
+      playSound("pop");
       router.refresh();
     });
   };

@@ -1,5 +1,6 @@
 "use client";
-import { useMemo, useState, useTransition } from "react";
+import { useEffect, useMemo, useRef, useState, useTransition } from "react";
+import { playSound } from "@/lib/sound";
 import { useLive } from "@/lib/realtime";
 import { formatNaira } from "@/lib/money";
 import { AttendeeShell, type ShellFunction } from "../AttendeeShell";
@@ -29,6 +30,12 @@ export function NumberPickerCard({
   const mine = state.mine?.status === "confirmed" ? state.mine.number : null;
   const needsCode = fn.gate === "code" && !unlocked;
   const isCalled = mine != null && state.called === mine;
+  const wasCalled = useRef(isCalled);
+  useEffect(() => {
+    // Ding once, the moment *your* number is called.
+    if (isCalled && !wasCalled.current) playSound("ding");
+    wasCalled.current = isCalled;
+  }, [isCalled]);
 
   async function pick(n: number) {
     if (mine != null || ended || needsCode || busy) return;
@@ -40,6 +47,7 @@ export function NumberPickerCard({
       setPendingNumber(n);
       const r = await claimNumberAction(fn.id, n);
       if (!r.ok) {
+        playSound("bonk");
         setPendingNumber(null);
         setMessage(r.error);
         refresh();
@@ -49,6 +57,7 @@ export function NumberPickerCard({
         window.location.href = r.data.authorizationUrl;
         return;
       }
+      playSound("pop");
       setPendingNumber(null);
       refresh();
     });

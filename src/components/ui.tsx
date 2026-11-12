@@ -1,4 +1,6 @@
+"use client";
 import type { ComponentProps, ReactNode } from "react";
+import { playSound } from "@/lib/sound";
 
 function cx(...c: (string | false | null | undefined)[]) {
   return c.filter(Boolean).join(" ");
@@ -6,10 +8,15 @@ function cx(...c: (string | false | null | undefined)[]) {
 
 type ButtonProps = ComponentProps<"button"> & { variant?: "primary" | "secondary" | "ghost" | "dark" };
 
-export function Button({ variant = "primary", className, ...props }: ButtonProps) {
+export function Button({ variant = "primary", className, onPointerDown, ...props }: ButtonProps) {
   return (
     <button
       {...props}
+      onPointerDown={(e) => {
+        // Main actions get a soft tap; secondary/ghost buttons stay silent so it never gets noisy.
+        if (variant === "primary" || variant === "dark") playSound("tap");
+        onPointerDown?.(e);
+      }}
       className={cx(
         "inline-flex items-center justify-center gap-2 rounded-full px-5 py-3 text-sm font-bold",
         "transition-[transform,background-color,opacity] duration-150 ease-out active:scale-[0.97]",

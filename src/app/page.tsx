@@ -32,7 +32,7 @@ function Hero() {
     <section className="relative isolate overflow-hidden pb-40 pt-10 text-center sm:pb-56">
       <Ribbon />
       <div className="relative z-10 mx-auto max-w-3xl px-4">
-        <Image src="/landing/hero.webp" alt="" width={256} height={232} priority className="mx-auto h-auto w-40 sm:w-52" />
+        <Image src="/landing/hero.v2.webp" alt="" width={432} height={424} priority className="mx-auto h-auto w-40 sm:w-52" />
         <p className="mt-4 flex items-center justify-center gap-3 text-xs">
           Introducing Functions <span aria-hidden>◆◇</span> Organise Meetings
         </p>
@@ -78,7 +78,7 @@ function WhatIs() {
           </a>
         </Reveal>
         <Reveal delay={120} className="justify-self-center">
-          <Image src="/landing/phone.webp" alt="A phone showing a locked study guide with a Purchase Access button" width={552} height={770} className="h-auto w-72 sm:w-96" />
+          <Image src="/landing/phone.v2.webp" alt="A phone showing a locked study guide with a Purchase Access button" width={1200} height={1580} className="h-auto w-72 sm:w-96" />
         </Reveal>
       </div>
       <div className="-mt-12 rounded-b-[48px] bg-ink px-6 pb-8 pt-20 text-center text-paper">
@@ -133,7 +133,7 @@ function Features() {
           </div>
         </Reveal>
         <Reveal delay={120} className="justify-self-center">
-          <Image src="/landing/plug.webp" alt="" width={290} height={350} className="h-auto w-48 sm:w-60" />
+          <Image src="/landing/plug.v2.webp" alt="" width={570} height={740} className="h-auto w-48 sm:w-60" />
         </Reveal>
       </div>
     </section>
@@ -141,9 +141,9 @@ function Features() {
 }
 
 const ROWS = [
-  { img: "card_lock", title: "Keep your work safe, valued, and paid", body: "Gate recordings, documents and videos behind a payment or an access code.", alt: "A locked lecture transcript" },
-  { img: "card_numbers", title: "Get reservations, and number allocations", body: "Let guests lock in a seat and choose their own number instantly. Works for physical and virtual meetings.", alt: "A grid of numbers with some picked" },
-  { img: "card_chat", title: "One home for discussions, Q&As, and live polls", body: "Bring your audience into one space. Gather live feedback and keep the conversation going. Coming soon.", alt: "A chat thread from The Watchers Channel" },
+  { img: "card_lock.v2", title: "Keep your work safe, valued, and paid", body: "Gate recordings, documents and videos behind a payment or an access code.", alt: "A locked lecture transcript" },
+  { img: "card_numbers.v2", title: "Get reservations, and number allocations", body: "Let guests lock in a seat and choose their own number instantly. Works for physical and virtual meetings.", alt: "A grid of numbers with some picked" },
+  { img: "card_chat.v2", title: "One home for discussions, Q&As, and live polls", body: "Bring your audience into one space. Gather live feedback and keep the conversation going. Coming soon.", alt: "A chat thread from The Watchers Channel" },
   { img: "card_cert", title: "Issue verified proof of attendance", body: "Reward attendees with a certificate the moment your session ends. Coming soon.", alt: "A certificate of completion" },
 ];
 
@@ -153,7 +153,7 @@ function FeatureRows() {
       {ROWS.map((r, i) => (
         <div key={r.img} className={`grid items-center gap-10 md:grid-cols-2 ${i % 2 ? "md:[&>*:first-child]:order-2" : ""}`}>
           <Reveal>
-            <Image src={`/landing/${r.img}.webp`} alt={r.alt} width={553} height={618} className="h-auto w-full max-w-sm justify-self-center rounded-[40px]" />
+            <Image src={`/landing/${r.img}.webp`} alt={r.alt} width={1104} height={1232} className="h-auto w-full max-w-sm justify-self-center rounded-[40px]" />
           </Reveal>
           <Reveal delay={100}>
             <h3 className="font-serif text-4xl leading-tight sm:text-5xl">{r.title}</h3>
@@ -177,7 +177,7 @@ function Benefits() {
     >
       <div className="mx-auto flex max-w-3xl flex-col items-center gap-6 px-4">
         <Reveal>
-          <Image src="/landing/notes_top.webp" alt="Profit: what you build stays valuable. Order: reservations turn a crowd into a queue." width={685} height={365} className="h-auto w-full max-w-xl" />
+          <Image src="/landing/notes_top.v2.webp" alt="Profit: what you build stays valuable. Order: reservations turn a crowd into a queue." width={1386} height={765} className="h-auto w-full max-w-xl" />
         </Reveal>
         <h2 className="text-center text-4xl font-bold leading-tight text-white sm:text-5xl">
           Benefits that
@@ -185,7 +185,7 @@ function Benefits() {
           Huddle provides.
         </h2>
         <Reveal delay={100}>
-          <Image src="/landing/notes_bottom.webp" alt="Continuity: Forum Access keeps your community connected. Proof: a Certificate turns attendance into an achievement." width={620} height={365} className="h-auto w-full max-w-lg" />
+          <Image src="/landing/notes_bottom.v2.webp" alt="Continuity: Forum Access keeps your community connected. Proof: a Certificate turns attendance into an achievement." width={1346} height={726} className="h-auto w-full max-w-lg" />
         </Reveal>
       </div>
     </section>
@@ -220,7 +220,7 @@ function HowItWorks() {
       </Step>
       <Divider />
       <Step n="02" title="Build your event" body="Add the details. Pick a date. You're live.">
-        <Image src="/landing/calendar.webp" alt="A date and time picker" width={515} height={581} className="h-auto w-72" />
+        <Image src="/landing/calendar.v2.webp" alt="A date and time picker" width={1034} height={1167} className="h-auto w-72" />
       </Step>
       <Divider />
       <Step n="03" title="Attach what you need" body="Number Picker. RSVP & Seats. Extra Content. Only what fits.">
@@ -239,7 +239,7 @@ function HowItWorks() {
       </Step>
       <Divider />
       <Step n="05" title="Earn from what you built" body="Gate it, price it, get paid. You keep the majority.">
-        <Image src="/landing/coins.webp" alt="" width={432} height={281} className="h-auto w-56" />
+        <Image src="/landing/coins.v2.webp" alt="" width={940} height={600} className="h-auto w-56" />
       </Step>
     </section>
   );

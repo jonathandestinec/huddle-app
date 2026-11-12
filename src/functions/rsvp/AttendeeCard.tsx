@@ -2,6 +2,7 @@
 import { useRouter } from "next/navigation";
 import { useTransition, useState } from "react";
 import { Button } from "@/components/ui";
+import { playSound } from "@/lib/sound";
 import { AttendeeShell, type ShellFunction } from "../AttendeeShell";
 import { reserveSeatAction } from "./actions";
 
@@ -42,8 +43,13 @@ export function RsvpCard({
               onClick={() =>
                 start(async () => {
                   const r = await reserveSeatAction(fn.id);
-                  if (!r.ok) setError(r.error);
-                  else router.refresh();
+                  if (!r.ok) {
+                    playSound("bonk");
+                    setError(r.error);
+                  } else {
+                    playSound("pop");
+                    router.refresh();
+                  }
                 })
               }
             >

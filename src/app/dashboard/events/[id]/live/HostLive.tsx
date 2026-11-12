@@ -4,6 +4,7 @@ import { Button, cx } from "@/components/ui";
 import { callNumberAction, uncallNumberAction } from "@/functions/number-picker/host-actions";
 import type { HostState } from "@/functions/number-picker/host";
 import { useLive } from "@/lib/realtime";
+import { playSound } from "@/lib/sound";
 
 type Serialised = Omit<HostState, "claims"> & { claims: (Omit<HostState["claims"][number], "calledAt"> & { calledAt: string | Date | null })[] };
 
@@ -16,13 +17,18 @@ export function HostLive({ functionId, title, initial }: { functionId: string; t
   const byNumber = useMemo(() => new Map(state.claims.map((c) => [c.number, c])), [state.claims]);
   const calledEntry = state.called != null ? byNumber.get(state.called) : undefined;
 
-  const call = (n: number) =>
+  const call = (n: number) => {
+    playSound("tap");
     start(async () => {
       setError(undefined);
       const r = await callNumberAction(functionId, n);
-      if (!r.ok) setError(r.error);
+      if (!r.ok) {
+        playSound("bonk");
+        setError(r.error);
+      }
       refresh();
     });
+  };
 
   const banner = (
     <div className="rounded-3xl bg-ink p-8 text-center text-paper">

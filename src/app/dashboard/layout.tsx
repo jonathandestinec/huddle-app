@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { SoundToggle } from "@/components/SoundToggle";
 import { requireUser } from "@/lib/auth/session";
 
 export default async function DashboardLayout({ children }: LayoutProps<"/dashboard">) {
@@ -10,7 +11,10 @@ export default async function DashboardLayout({ children }: LayoutProps<"/dashbo
           <Link href="/dashboard" className="font-semibold">
             🐧 Huddle
           </Link>
-          <span className="text-sm text-slate">{user.email}</span>
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-slate">{user.email}</span>
+            <SoundToggle />
+          </div>
         </div>
       </header>
       <div className="mx-auto w-full max-w-5xl flex-1 px-4 py-8">{children}</div>

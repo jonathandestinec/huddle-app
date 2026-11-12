@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { SoundToggle } from "@/components/SoundToggle";
 import { getSession } from "@/lib/auth/session";
 import { getPublicEvent } from "@/lib/events/service";
 import { formatEventTime } from "@/lib/events/time";
@@ -34,6 +35,7 @@ export default async function PublicEventPage({ params }: PageProps<"/[org]/[eve
         )}
       </div>
       <div className="mt-6 flex items-center gap-2 text-sm text-slate">
+        <SoundToggle className="order-last ml-auto" />
         {/* eslint-disable-next-line @next/next/no-img-element */}
         {logo && <img src={logo} alt="" className="h-6 w-6 rounded-full object-cover" />}
         {org.name}
