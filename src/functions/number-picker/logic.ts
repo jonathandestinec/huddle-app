@@ -1,7 +1,9 @@
 import { and, eq, inArray, lt, or, sql } from "drizzle-orm";
 import { db } from "@/lib/db/client";
 import * as s from "@/lib/db/schema";
+import bcrypt from "bcryptjs";
 import { sendAccessEmail } from "@/lib/email/access";
+import { consumeRateLimit } from "@/lib/ratelimit";
 import { isUniqueViolation, uniqueConstraintName } from "@/lib/errors";
 import { getFunctionWithEvent } from "@/lib/functions/service";
 import { grantEntitlement, hasEntitlement } from "@/lib/gating/access";
@@ -45,7 +47,8 @@ export async function claimNumber(userId: string, functionId: string, n: number)
   if (!info || info.fn.type !== "number_picker") throw new Error("Not a number picker");
   if (info.event.status === "draft") return { ok: false, error: "This event isn't open yet" };
   if (info.event.status === "ended") return { ok: false, error: "This event has ended" };
-  const { min, max } = numberPickerConfigSchema.parse(info.fn.config);
+  const { min, max, anonymous } = numberPickerConfigSchema.parse(info.fn.config);
+  if (anonymous) throw new Error("This picker is anonymous — use claimAnonymous");
   if (!Number.isInteger(n) || n < min || n > max) return { ok: false, error: "That number isn't in range" };
 
   // Expired holds on this number (or this person's own) don't block anyone.
@@ -132,6 +135,60 @@ export async function claimNumber(userId: string, functionId: string, n: number)
   }
 }
 
+export const ANON_PICKS_PER_NETWORK = 30;
+
+/**
+ * Anonymous picking: no account, no email. One pick per phone (private device id), with a per-network
+ * cap so nobody can script every number. IP alone can't be the key: a whole church shares one Wi-Fi IP.
+ */
+export async function claimAnonymous(
+  functionId: string,
+  n: number,
+  who: { deviceHash: string; ipHash: string; code?: string },
+): Promise<ClaimResult | { ok: false; error: "That code didn't work" | "Too many tries — wait a few minutes" | "Too many picks from this network — ask the host for help" }> {
+  const info = await getFunctionWithEvent(functionId);
+  if (!info || info.fn.type !== "number_picker") throw new Error("Not a number picker");
+  const cfg = numberPickerConfigSchema.parse(info.fn.config);
+  if (!cfg.anonymous) throw new Error("This picker asks for names");
+  if (info.event.status === "draft") return { ok: false, error: "This event isn't open yet" };
+  if (info.event.status === "ended") return { ok: false, error: "This event has ended" };
+  if (!Number.isInteger(n) || n < cfg.min || n > cfg.max) return { ok: false, error: "That number isn't in range" };
+
+  const [mine] = await db
+    .select({ number: s.numberClaims.number })
+    .from(s.numberClaims)
+    .where(and(eq(s.numberClaims.eventFunctionId, functionId), eq(s.numberClaims.deviceHash, who.deviceHash)));
+  if (mine) return { ok: false, error: `You already hold #${mine.number}` };
+
+  if (info.fn.gate === "code") {
+    const allowed = await consumeRateLimit([{ key: `code:${functionId}:ip:${who.ipHash}`, limit: 5 }], 10 * 60 * 1000);
+    if (!allowed) return { ok: false, error: "Too many tries — wait a few minutes" };
+    if (!info.fn.accessCodeHash || !(await bcrypt.compare((who.code ?? "").trim(), info.fn.accessCodeHash))) {
+      return { ok: false, error: "That code didn't work" };
+    }
+  } else if (info.fn.gate !== "free") {
+    throw new Error("Anonymous picking works with Free or Access code");
+  }
+
+  const ok = await consumeRateLimit([{ key: `anon-pick:${functionId}:ip:${who.ipHash}`, limit: ANON_PICKS_PER_NETWORK }], 30 * 24 * 60 * 60 * 1000);
+  if (!ok) return { ok: false, error: "Too many picks from this network — ask the host for help" };
+
+  try {
+    await db.insert(s.numberClaims).values({ eventFunctionId: functionId, number: n, deviceHash: who.deviceHash, status: "confirmed" });
+    return { ok: true, status: "confirmed" };
+  } catch (err) {
+    if (!isUniqueViolation(err)) throw err;
+    if (uniqueConstraintName(err) === "number_claims_function_device") {
+      const [m] = await db
+        .select({ number: s.numberClaims.number })
+        .from(s.numberClaims)
+        .where(and(eq(s.numberClaims.eventFunctionId, functionId), eq(s.numberClaims.deviceHash, who.deviceHash)));
+      return { ok: false, error: `You already hold #${m?.number ?? n}` };
+    }
+    return { ok: false, error: `Someone just grabbed #${n}. Try another?` };
+  }
+}
+
 /** On paid settlement: confirm the held number, or re-take it if the hold expired and it's still free. */
 export async function numberPickerOnEntitled(ctx: EntitledContext): Promise<void> {
   if (!ctx.payment) return;
@@ -168,16 +225,23 @@ export type PickerState = {
   called: number | null;
 };
 
-export async function getPickerState(functionId: string, viewerId: string | null): Promise<PickerState> {
+export async function getPickerState(functionId: string, viewerId: string | null, deviceHash?: string | null): Promise<PickerState & { anonymous: boolean }> {
   const [fn] = await db.select().from(s.eventFunctions).where(eq(s.eventFunctions.id, functionId));
-  const { min, max } = numberPickerConfigSchema.parse(fn.config);
+  const { min, max, anonymous } = numberPickerConfigSchema.parse(fn.config);
   const now = Date.now();
   const rows = (await db.select().from(s.numberClaims).where(eq(s.numberClaims.eventFunctionId, functionId))).filter(
     (c) => c.status === "confirmed" || (c.holdExpiresAt && c.holdExpiresAt.getTime() > now),
   );
-  const mineRow = viewerId ? rows.find((c) => c.userId === viewerId) : undefined;
+  const mineRow = anonymous
+    ? deviceHash
+      ? rows.find((c) => c.deviceHash === deviceHash)
+      : undefined
+    : viewerId
+      ? rows.find((c) => c.userId === viewerId)
+      : undefined;
   const calledRow = rows.filter((c) => c.calledAt).sort((a, b) => b.calledAt!.getTime() - a.calledAt!.getTime())[0];
   return {
+    anonymous,
     min,
     max,
     taken: rows.map((c) => c.number).sort((a, b) => a - b),

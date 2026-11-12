@@ -1,51 +1,95 @@
 import Link from "next/link";
 import { Penguin } from "@/components/Penguin";
-import { listOrgEvents } from "@/lib/events/service";
+import { buttonClass } from "@/components/styles";
+import { StatusPill } from "@/components/ui";
+import { listOrgEventsWithCounts } from "@/lib/events/service";
 import { formatEventTime } from "@/lib/events/time";
 import { requireCurrentOrg } from "@/lib/orgs/current";
 
-const statusLabel = { draft: "Draft", published: "Live", ended: "Ended" } as const;
+function nextStep(e: { status: "draft" | "published" | "ended"; functionCount: number }) {
+  if (e.status === "ended") return "Finished — recordings stay available to people who unlocked them.";
+  if (e.functionCount === 0) return "Next: choose what people get (numbers, seats, content).";
+  if (e.status === "draft") return "Next: publish it so people can join.";
+  return "Live — share the link and host it.";
+}
 
 export default async function EventsPage() {
   const { org } = await requireCurrentOrg();
-  const events = await listOrgEvents(org.id);
+  const events = await listOrgEventsWithCounts(org.id);
+  const upcoming = events.filter((e) => e.status !== "ended");
+  const past = events.filter((e) => e.status === "ended");
+
   return (
-    <div>
-      <div className="flex items-end justify-between gap-4">
+    <div className="space-y-10">
+      <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <p className="text-sm text-slate">{org.name}</p>
-          <h1 className="font-serif text-4xl">Your huddles</h1>
+          <h1 className="font-serif text-[2.6rem] leading-none sm:text-5xl">Your events</h1>
+          <p className="mt-2 text-slate">Create an event, choose what people get, then share the link.</p>
         </div>
-        <Link href="/dashboard/events/new" className="rounded-full bg-huddle-yellow px-5 py-3 text-sm font-bold">
-          New event
+        <Link href="/dashboard/events/new" className={buttonClass("primary", "lg")}>
+          + Create an event
         </Link>
       </div>
+
       {!org.paystackSubaccountCode && (
-        <Link href="/dashboard/onboarding/bank" className="mt-6 block rounded-2xl border border-dashed border-ink/20 p-4 text-sm">
-          💸 <strong>Want to earn from your events?</strong> Link a bank account →
+        <Link
+          href="/dashboard/onboarding/bank"
+          className="flex items-center gap-4 rounded-3xl border-2 border-dashed border-ink/15 p-5 [@media(hover:hover)]:hover:border-ink/30"
+        >
+          <span className="text-2xl" aria-hidden>
+            💸
+          </span>
+          <span>
+            <span className="block font-semibold">Want to charge for anything?</span>
+            <span className="text-slate">Add your bank account first — it takes a minute.</span>
+          </span>
+          <span className="ml-auto font-bold" aria-hidden>
+            →
+          </span>
         </Link>
       )}
+
       {events.length === 0 ? (
-        <div className="mt-16 flex flex-col items-center text-center">
+        <div className="flex flex-col items-center rounded-3xl bg-surface px-6 py-16 text-center">
           <Penguin mood="wave" size={120} />
-          <p className="mt-4 font-serif text-2xl">No huddles yet. Let&apos;s start one.</p>
+          <h2 className="mt-5 font-serif text-3xl">No events yet</h2>
+          <p className="mt-2 max-w-sm text-slate">Your first one takes about two minutes. Add a title and a date — you can change anything later.</p>
+          <Link href="/dashboard/events/new" className={`${buttonClass("primary", "lg")} mt-6`}>
+            Create your first event
+          </Link>
         </div>
       ) : (
-        <ul className="mt-8 grid gap-3 sm:grid-cols-2">
-          {events.map((e) => (
-            <li key={e.id}>
-              <Link
-                href={`/dashboard/events/${e.id}`}
-                className="block rounded-3xl bg-surface p-5 transition-transform duration-150 hover:-translate-y-0.5"
-              >
-                <span className="text-xs font-semibold uppercase tracking-wide text-slate">{statusLabel[e.status]}</span>
-                <p className="mt-1 font-serif text-2xl">{e.title}</p>
-                <p className="text-sm text-slate">{formatEventTime(e.startsAt)}</p>
-              </Link>
-            </li>
-          ))}
-        </ul>
+        <>
+          <EventList title="Coming up" events={upcoming} />
+          {past.length > 0 && <EventList title="Past events" events={past} />}
+        </>
       )}
     </div>
+  );
+}
+
+function EventList({ title, events }: { title: string; events: Awaited<ReturnType<typeof listOrgEventsWithCounts>> }) {
+  if (!events.length) return null;
+  return (
+    <section>
+      <h2 className="mb-3 text-sm font-bold uppercase tracking-[0.14em] text-slate">{title}</h2>
+      <ul className="grid gap-3 sm:grid-cols-2">
+        {events.map((e) => (
+          <li key={e.id}>
+            <Link
+              href={`/dashboard/events/${e.id}`}
+              className="block h-full rounded-3xl bg-surface p-5 shadow-[0_1px_2px_rgba(26,26,26,0.06)] transition-transform duration-200 ease-[var(--ease-out)] [@media(hover:hover)]:hover:-translate-y-0.5"
+            >
+              <div className="flex items-center justify-between gap-3">
+                <StatusPill status={e.status} />
+                <span className="text-sm text-slate">{formatEventTime(e.startsAt)}</span>
+              </div>
+              <p className="mt-3 font-serif text-[1.9rem] leading-tight">{e.title}</p>
+              <p className="mt-2 text-[0.95rem] text-slate">{nextStep(e)}</p>
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </section>
   );
 }

@@ -16,20 +16,21 @@ test("organiser sets up an event, attendee claims a number, host calls it", asyn
   await page.getByPlaceholder("Sunday Service").fill("E2E Service");
   await page.locator('input[type="datetime-local"]').first().fill("2026-12-06T09:00");
   await page.getByRole("button", { name: "Create event" }).click();
-  await expect(page).toHaveURL(/dashboard\/events\/[0-9a-f-]{36}$/);
-  const eventUrl = page.url();
+  await expect(page).toHaveURL(/dashboard\/events\/[0-9a-f-]{36}\?step=functions$/);
+  const eventUrl = page.url().split("?")[0];
 
-  await page.getByRole("button", { name: /Number Picker.*Attach \+/ }).click();
-  await page.getByRole("button", { name: "Attach", exact: true }).click();
-  await expect(page.getByRole("button", { name: /Number Picker.*Edit/ })).toBeVisible();
+  await page.getByRole("button", { name: "Number Picker: add to event" }).click();
+  await page.getByRole("button", { name: "Add to event", exact: true }).click();
+  await expect(page.getByRole("button", { name: "Number Picker: change settings" })).toBeVisible();
 
-  await page.getByRole("button", { name: /RSVP & Seats.*Attach \+/ }).click();
-  await page.getByRole("button", { name: "Attach", exact: true }).click();
-  await expect(page.getByRole("button", { name: /RSVP & Seats.*Edit/ })).toBeVisible();
+  await page.getByRole("button", { name: "RSVP & Seats: add to event" }).click();
+  await page.getByRole("button", { name: "Add to event", exact: true }).click();
+  await expect(page.getByRole("button", { name: "RSVP & Seats: change settings" })).toBeVisible();
 
-  await page.getByRole("button", { name: "Publish" }).click();
-  await expect(page.getByText("Live", { exact: true })).toBeVisible();
-  const publicUrl = await page.getByRole("link", { name: "Preview" }).getAttribute("href");
+  await page.getByRole("tab", { name: /Share/ }).click();
+  await page.getByRole("button", { name: "Publish event" }).click();
+  await expect(page.getByText("Your event is live 🎉")).toBeVisible();
+  const publicUrl = await page.getByRole("link", { name: /See what people see/ }).getAttribute("href");
   expect(publicUrl).toBeTruthy();
 
   // ── Attendee (separate browser context, no cookies) ──
@@ -49,7 +50,7 @@ test("organiser sets up an event, attendee claims a number, host calls it", asyn
 
   // ── Host calls #42; attendee sees it live ──
   await page.goto(`${eventUrl}/live`);
-  await page.getByRole("button", { name: /^42/ }).click();
+  await page.getByRole("button", { name: "Call next number" }).click();
   await expect(attendee.getByText("It's your turn")).toBeVisible({ timeout: 10_000 });
 
   await attendeeCtx.close();

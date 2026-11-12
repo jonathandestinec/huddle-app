@@ -1,24 +1,27 @@
+import Link from "next/link";
 import { notFound } from "next/navigation";
+import { StatusPill } from "@/components/ui";
 import { ContentManager } from "@/functions/extra-content/ContentManager";
 import { listContentForOwner } from "@/functions/extra-content/logic";
-import { getEventOverview } from "@/lib/events/overview";
-import { formatNaira } from "@/lib/money";
 import { requireOrgOwner } from "@/lib/auth/session";
-import { getEventById, listEventFunctions } from "@/lib/events/service";
-import { utcToLagosLocal } from "@/lib/events/time";
 import { getEnv } from "@/lib/env";
+import { getEventOverview } from "@/lib/events/overview";
+import { getEventById, listEventFunctions } from "@/lib/events/service";
+import { formatEventTime, utcToLagosLocal } from "@/lib/events/time";
 import { EventForm } from "../EventForm";
-import { PublishBar } from "./PublishBar";
+import { EditorSteps, type StepId } from "./EditorSteps";
 import { FunctionsPanel } from "./FunctionsPanel";
+import { SharePanel } from "./SharePanel";
 
-export default async function EventEditorPage({ params }: PageProps<"/dashboard/events/[id]">) {
+export default async function EventEditorPage({ params, searchParams }: PageProps<"/dashboard/events/[id]">) {
   const { id } = await params;
+  const { step } = await searchParams;
   const ev = await getEventById(id);
   if (!ev) notFound();
   await requireOrgOwner(ev.organisationId);
-  const functions = await listEventFunctions(ev.id);
+  const [functions, overview] = await Promise.all([listEventFunctions(ev.id), getEventOverview(ev.id)]);
   const publicUrl = `${getEnv().APP_URL}/${ev.org.slug}/${ev.slug}`;
-  const overview = await getEventOverview(ev.id);
+
   const contentFn = functions.find((f) => f.type === "extra_content");
   const extras: Record<string, React.ReactNode> = {};
   if (contentFn) {
@@ -26,24 +29,26 @@ export default async function EventEditorPage({ params }: PageProps<"/dashboard/
     extras[contentFn.id] = <ContentManager functionId={contentFn.id} items={items.map(({ id, title, kind }) => ({ id, title, kind }))} />;
   }
 
+  const initialStep: StepId =
+    step === "details" || step === "functions" || step === "share" ? step : functions.length === 0 && ev.status === "draft" ? "details" : "share";
+
   return (
-    <div className="space-y-10">
-      <PublishBar eventId={ev.id} status={ev.status} publicUrl={publicUrl} title={ev.title} />
-      <div className="grid grid-cols-3 gap-3">
-        {[
-          ["People in", String(overview.registrations)],
-          ["Numbers taken", String(overview.numbersTaken)],
-          ["You've earned", formatNaira(overview.revenueKobo)],
-        ].map(([label, value]) => (
-          <div key={label} className="rounded-3xl bg-surface p-5">
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate">{label}</p>
-            <p className="mt-1 font-serif text-3xl tabular-nums">{value}</p>
-          </div>
-        ))}
+    <div className="space-y-6">
+      <div>
+        <Link href="/dashboard/events" className="inline-flex min-h-12 items-center gap-1 font-semibold text-slate">
+          ← All events
+        </Link>
+        <div className="mt-1 flex flex-wrap items-center gap-3">
+          <h1 className="font-serif text-[2.4rem] leading-none sm:text-5xl">{ev.title}</h1>
+          <StatusPill status={ev.status} />
+        </div>
+        <p className="mt-2 text-slate">{formatEventTime(ev.startsAt)}</p>
       </div>
-      <div className="grid gap-10 lg:grid-cols-[1fr_1.1fr]">
-        <section>
-          <h2 className="mb-4 text-sm font-bold uppercase tracking-wide text-slate">Details</h2>
+
+      <EditorSteps
+        initial={initialStep}
+        counts={{ functions: functions.length }}
+        details={
           <EventForm
             eventId={ev.id}
             initial={{
@@ -56,9 +61,19 @@ export default async function EventEditorPage({ params }: PageProps<"/dashboard/
               coverKey: ev.coverKey ?? undefined,
             }}
           />
-        </section>
-        <FunctionsPanel event={ev} functions={functions} hasBank={!!ev.org.paystackSubaccountCode} extras={extras} />
-      </div>
+        }
+        functions={<FunctionsPanel event={ev} functions={functions} hasBank={!!ev.org.paystackSubaccountCode} extras={extras} />}
+        share={
+          <SharePanel
+            eventId={ev.id}
+            status={ev.status}
+            publicUrl={publicUrl}
+            hasFunctions={functions.length > 0}
+            hasPicker={functions.some((f) => f.type === "number_picker")}
+            overview={overview}
+          />
+        }
+      />
     </div>
   );
 }

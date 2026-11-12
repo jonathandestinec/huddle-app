@@ -193,9 +193,10 @@ export const numberClaims = pgTable(
       .notNull()
       .references(() => eventFunctions.id, { onDelete: "cascade" }),
     number: integer("number").notNull(),
-    userId: text("user_id")
-      .notNull()
-      .references(() => user.id, { onDelete: "cascade" }),
+    /** Null for anonymous pickers. */
+    userId: text("user_id").references(() => user.id, { onDelete: "cascade" }),
+    /** Anonymous pickers: hash of the phone's private device id. */
+    deviceHash: text("device_hash"),
     status: claimStatus("status").notNull(),
     holdExpiresAt: ts("hold_expires_at"),
     calledAt: ts("called_at"),
@@ -204,6 +205,7 @@ export const numberClaims = pgTable(
   (t) => [
     unique("number_claims_function_number").on(t.eventFunctionId, t.number),
     unique("number_claims_function_user").on(t.eventFunctionId, t.userId),
+    unique("number_claims_function_device").on(t.eventFunctionId, t.deviceHash),
   ],
 );
 

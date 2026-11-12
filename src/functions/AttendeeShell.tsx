@@ -71,21 +71,23 @@ export function AttendeeShell({
   return (
     <section className="rounded-3xl bg-surface p-5 shadow-[0_1px_2px_rgba(26,26,26,0.06)]">
       <header className="flex items-center gap-3">
-        <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-huddle-yellow/60 text-lg">{fn.emoji}</span>
-        <h2 className="flex-1 font-semibold">{fn.label}</h2>
-        <span className={`rounded-full px-3 py-1 text-xs font-bold ${unlocked ? "bg-huddle-yellow" : "bg-ink/5"}`}>{badge}</span>
+        <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-huddle-yellow/60 text-2xl" aria-hidden>
+          {fn.emoji}
+        </span>
+        <h2 className="flex-1 text-[1.15rem] font-bold">{fn.label}</h2>
+        <span className={`rounded-full px-3 py-1 text-sm font-bold ${unlocked ? "bg-huddle-yellow" : "bg-ink/5"}`}>{badge}</span>
       </header>
-      <div className="mt-4">
+      <div className="mt-5">
         {unlocked ? children : lockedBody}
         {!unlocked && !hideUnlock && (
           <div className="mt-4 space-y-2">
             {fn.gate === "free" && (
-              <Button className="w-full" disabled={pending} onClick={() => run(onFree ?? (() => unlockFreeAction(fn.id)))}>
+              <Button size="lg" className="w-full" disabled={pending} onClick={() => run(onFree ?? (() => unlockFreeAction(fn.id)))}>
                 {pending ? "One moment…" : freeCta}
               </Button>
             )}
             {fn.gate === "paid" && fn.priceKobo && (
-              <Button className="w-full" disabled={pending} onClick={() => run(() => startPaidUnlockAction(fn.id))}>
+              <Button size="lg" className="w-full" disabled={pending} onClick={() => run(() => startPaidUnlockAction(fn.id))}>
                 {pending ? "Opening checkout…" : (paidCta ?? `Unlock for ${formatNaira(fn.priceKobo)}`)}
               </Button>
             )}
@@ -105,7 +107,11 @@ export function AttendeeShell({
             )}
           </div>
         )}
-        {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
+        {error && (
+          <p role="alert" className="mt-3 rounded-xl bg-red-50 px-3 py-2 font-medium text-red-800">
+            {error}
+          </p>
+        )}
       </div>
     </section>
   );

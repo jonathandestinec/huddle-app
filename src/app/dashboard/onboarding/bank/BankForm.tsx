@@ -1,7 +1,7 @@
 "use client";
 import { useRouter } from "next/navigation";
 import { useEffect, useState, useTransition } from "react";
-import { Button, Field, Input } from "@/components/ui";
+import { Button, Field, Input, Select } from "@/components/ui";
 import { linkBankAction, resolveAccountAction } from "@/lib/orgs/bank-actions";
 
 export function BankForm({ organisationId, banks }: { organisationId: string; banks: { name: string; code: string }[] }) {
@@ -39,7 +39,7 @@ export function BankForm({ organisationId, banks }: { organisationId: string; ba
   return (
     <div className="mt-8 space-y-5">
       <Field label="Bank">
-        <select
+        <Select
           value={bankCode}
           onChange={(e) => setBankCode(e.target.value)}
           className="w-full rounded-xl border border-ink/15 bg-surface px-4 py-3 outline-none focus:border-ink"
@@ -50,7 +50,7 @@ export function BankForm({ organisationId, banks }: { organisationId: string; ba
               {b.name}
             </option>
           ))}
-        </select>
+        </Select>
       </Field>
       <Field label="Account number" error={error}>
         <Input

@@ -4,6 +4,7 @@ import { ExtraContentCard } from "@/functions/extra-content/AttendeeCard";
 import { listContent } from "@/functions/extra-content/logic";
 import { NumberPickerCard } from "@/functions/number-picker/AttendeeCard";
 import { getPickerState } from "@/functions/number-picker/logic";
+import { getDeviceHash } from "@/lib/device";
 import { RsvpCard } from "@/functions/rsvp/AttendeeCard";
 import { hasSeat, seatsLeft } from "@/functions/rsvp/logic";
 import type { SessionUser } from "@/lib/auth/session";
@@ -34,7 +35,7 @@ async function renderCard(f: EventFunction, event: Event, viewer: SessionUser | 
           key={f.id}
           fn={shell}
           unlocked={unlocked}
-          initial={await getPickerState(f.id, viewer?.id ?? null)}
+          initial={await getPickerState(f.id, viewer?.id ?? null, await getDeviceHash())}
           ended={ended}
         />
       );

@@ -31,7 +31,7 @@ function Hero() {
   return (
     <section className="relative isolate overflow-hidden pb-40 pt-10 text-center sm:pb-56">
       <Ribbon />
-      <div className="relative z-10 mx-auto max-w-3xl px-4">
+      <div className="hero-enter relative z-10 mx-auto max-w-3xl px-4">
         <Image src="/landing/hero.v2.webp" alt="" width={432} height={424} priority className="mx-auto h-auto w-40 sm:w-52" />
         <p className="mt-4 flex items-center justify-center gap-3 text-xs">
           Introducing Functions <span aria-hidden>◆◇</span> Organise Meetings

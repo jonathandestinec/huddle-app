@@ -1,4 +1,4 @@
-import { and, asc, eq } from "drizzle-orm";
+import { and, asc, eq, isNull } from "drizzle-orm";
 import { assertOrgOwner } from "@/lib/auth/permissions";
 import { db } from "@/lib/db/client";
 import * as s from "@/lib/db/schema";
@@ -32,11 +32,27 @@ export async function uncallNumber(userId: string, functionId: string, n: number
 }
 
 export type HostState = {
-  claims: { number: number; name: string; email: string; status: "held" | "confirmed"; calledAt: Date | null }[];
+  /** name/email are null for anonymous picks. */
+  claims: { number: number; name: string | null; email: string | null; status: "held" | "confirmed"; calledAt: Date | null }[];
   called: number | null;
   min: number;
   max: number;
+  anonymous: boolean;
 };
+
+/** Calls the lowest picked number that hasn't been called yet. Returns it, or null when everyone's been called. */
+export async function callNextNumber(userId: string, functionId: string): Promise<number | null> {
+  await ownPicker(userId, functionId);
+  const [next] = await db
+    .select({ number: s.numberClaims.number })
+    .from(s.numberClaims)
+    .where(and(eq(s.numberClaims.eventFunctionId, functionId), eq(s.numberClaims.status, "confirmed"), isNull(s.numberClaims.calledAt)))
+    .orderBy(asc(s.numberClaims.number))
+    .limit(1);
+  if (!next) return null;
+  await callNumber(userId, functionId, next.number);
+  return next.number;
+}
 
 export async function getHostState(userId: string, functionId: string): Promise<HostState> {
   await ownPicker(userId, functionId);
@@ -50,12 +66,13 @@ export async function getHostState(userId: string, functionId: string): Promise<
       holdExpiresAt: s.numberClaims.holdExpiresAt,
     })
     .from(s.numberClaims)
-    .innerJoin(s.user, eq(s.user.id, s.numberClaims.userId))
+    .leftJoin(s.user, eq(s.user.id, s.numberClaims.userId))
     .where(eq(s.numberClaims.eventFunctionId, functionId))
     .orderBy(asc(s.numberClaims.number));
   const now = Date.now();
-  const { called, min, max } = await getPickerState(functionId, null);
+  const { called, min, max, anonymous } = await getPickerState(functionId, null);
   return {
+    anonymous,
     claims: rows
       .filter((r) => r.status === "confirmed" || (r.holdExpiresAt && r.holdExpiresAt.getTime() > now))
       .map(({ holdExpiresAt: _, ...r }) => r),

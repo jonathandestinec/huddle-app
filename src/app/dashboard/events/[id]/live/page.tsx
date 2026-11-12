@@ -23,5 +23,5 @@ export default async function LivePage({ params }: PageProps<"/dashboard/events/
       </div>
     );
   }
-  return <HostLive functionId={picker.id} title={ev.title} initial={await getHostState(user.id, picker.id)} />;
+  return <HostLive functionId={picker.id} eventId={ev.id} title={ev.title} initial={await getHostState(user.id, picker.id)} />;
 }

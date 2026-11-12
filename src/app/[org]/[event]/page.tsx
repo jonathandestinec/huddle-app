@@ -25,32 +25,49 @@ export default async function PublicEventPage({ params }: PageProps<"/[org]/[eve
   ]);
 
   return (
-    <main className="mx-auto w-full max-w-xl flex-1 px-4 pb-20">
+    <main className={`mx-auto w-full max-w-xl flex-1 px-4 ${event.meetingUrl && event.status !== "ended" ? "pb-32" : "pb-16"}`}>
       <div className="relative -mx-4 aspect-[16/9] overflow-hidden bg-huddle-yellow sm:mx-0 sm:mt-4 sm:rounded-3xl">
         {cover ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img src={cover} alt="" className="h-full w-full object-cover" />
         ) : (
-          <div className="flex h-full items-center justify-center font-serif text-5xl italic">{org.name}</div>
+          <div className="flex h-full items-center justify-center px-6 text-center font-serif text-5xl italic">{org.name}</div>
         )}
       </div>
-      <div className="mt-6 flex items-center gap-2 text-sm text-slate">
-        <SoundToggle className="order-last ml-auto" />
+      <div className="mt-5 flex items-center gap-2 text-[0.95rem] text-slate">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        {logo && <img src={logo} alt="" className="h-6 w-6 rounded-full object-cover" />}
-        {org.name}
-        {event.status === "draft" && <span className="rounded-full bg-ink px-2 py-0.5 text-xs text-paper">Draft</span>}
-        {event.status === "ended" && <span className="rounded-full bg-ink/10 px-2 py-0.5 text-xs">Ended</span>}
+        {logo && <img src={logo} alt="" className="h-8 w-8 rounded-full object-cover" />}
+        <span className="font-semibold text-ink">{org.name}</span>
+        {event.status === "draft" && <span className="rounded-full bg-ink px-2.5 py-0.5 text-xs font-bold text-paper">Draft — only you can see this</span>}
+        {event.status === "ended" && <span className="rounded-full bg-ink/10 px-2.5 py-0.5 text-xs font-bold">Ended</span>}
+        <SoundToggle className="ml-auto" />
       </div>
-      <h1 className="mt-2 font-serif text-5xl leading-[1.05]">{event.title}</h1>
-      <p className="mt-3 font-semibold">{formatEventTime(event.startsAt)}</p>
-      {event.venue && <p className="text-slate">📍 {event.venue}</p>}
-      {event.meetingUrl && (
-        <a href={event.meetingUrl} target="_blank" rel="noopener noreferrer" className="mt-1 inline-block font-semibold underline">
-          Join online →
-        </a>
+      <h1 className="mt-3 font-serif text-[2.9rem] leading-[1.02]">{event.title}</h1>
+      <dl className="mt-4 space-y-2 text-[1.05rem]">
+        <div className="flex gap-3">
+          <dt aria-label="When">🗓️</dt>
+          <dd className="font-semibold">{formatEventTime(event.startsAt)}</dd>
+        </div>
+        {event.venue && (
+          <div className="flex gap-3">
+            <dt aria-label="Where">📍</dt>
+            <dd>{event.venue}</dd>
+          </div>
+        )}
+      </dl>
+      {event.description && <p className="mt-5 whitespace-pre-line text-[1.05rem] leading-relaxed">{event.description}</p>}
+      {event.meetingUrl && event.status !== "ended" && (
+        <div className="fixed inset-x-0 bottom-0 z-40 border-t border-ink/8 bg-paper/95 p-3 backdrop-blur sm:static sm:mt-5 sm:border-0 sm:bg-transparent sm:p-0">
+          <a
+            href={event.meetingUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mx-auto flex min-h-14 max-w-xl items-center justify-center gap-2 rounded-[14px] bg-ink px-6 font-bold text-paper sm:inline-flex sm:max-w-none"
+          >
+            Join the meeting online ↗
+          </a>
+        </div>
       )}
-      {event.description && <p className="mt-5 whitespace-pre-line leading-relaxed">{event.description}</p>}
       <FunctionCards
         functions={functions}
         event={event}

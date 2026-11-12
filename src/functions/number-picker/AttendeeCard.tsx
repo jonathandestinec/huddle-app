@@ -5,7 +5,7 @@ import { useLive } from "@/lib/realtime";
 import { formatNaira } from "@/lib/money";
 import { AttendeeShell, type ShellFunction } from "../AttendeeShell";
 import { useIdentity } from "../IdentifySheet";
-import { claimNumberAction } from "./actions";
+import { claimAnonymousAction, claimNumberAction } from "./actions";
 import { Grid } from "./Grid";
 import type { PickerState } from "./logic";
 
@@ -17,18 +17,22 @@ export function NumberPickerCard({
 }: {
   fn: ShellFunction;
   unlocked: boolean;
-  initial: PickerState;
+  initial: PickerState & { anonymous: boolean };
   ended: boolean;
 }) {
   const { ensureIdentity } = useIdentity();
-  const { data, refresh } = useLive<PickerState>(`/api/functions/${fn.id}/state`, 3000, initial);
+  const { data, refresh } = useLive<PickerState & { anonymous: boolean }>(`/api/functions/${fn.id}/state`, 3000, initial);
   const state = data ?? initial;
+  const anonymous = state.anonymous;
   const [pendingNumber, setPendingNumber] = useState<number | null>(null);
   const [message, setMessage] = useState<string>();
+  const [code, setCode] = useState("");
   const [busy, start] = useTransition();
   const taken = useMemo(() => new Set(state.taken), [state.taken]);
   const mine = state.mine?.status === "confirmed" ? state.mine.number : null;
-  const needsCode = fn.gate === "code" && !unlocked;
+  // Anonymous + code: the code is sent with the pick (there's no account to unlock).
+  const needsCode = fn.gate === "code" && !unlocked && !anonymous;
+  const anonNeedsCode = anonymous && fn.gate === "code";
   const isCalled = mine != null && state.called === mine;
   const wasCalled = useRef(isCalled);
   useEffect(() => {
@@ -40,12 +44,17 @@ export function NumberPickerCard({
   async function pick(n: number) {
     if (mine != null || ended || needsCode || busy) return;
     setMessage(undefined);
-    // Ask who they are OUTSIDE the transition: React holds transition state updates
-    // until the action resolves, so a sheet opened inside it would never render.
-    if (!(await ensureIdentity())) return;
+    if (anonNeedsCode && !code.trim()) {
+      playSound("bonk");
+      setMessage("Type the access code first, then tap your number.");
+      return;
+    }
+    // Named pickers: ask who they are OUTSIDE the transition — React holds transition state
+    // updates until the action resolves, so a sheet opened inside it would never render.
+    if (!anonymous && !(await ensureIdentity())) return;
     start(async () => {
       setPendingNumber(n);
-      const r = await claimNumberAction(fn.id, n);
+      const r = anonymous ? await claimAnonymousAction(fn.id, n, code || undefined) : await claimNumberAction(fn.id, n);
       if (!r.ok) {
         playSound("bonk");
         setPendingNumber(null);
@@ -53,7 +62,7 @@ export function NumberPickerCard({
         refresh();
         return;
       }
-      if (r.data.status === "held") {
+      if (r.data.status === "held" && "authorizationUrl" in r.data) {
         window.location.href = r.data.authorizationUrl;
         return;
       }
@@ -71,7 +80,9 @@ export function NumberPickerCard({
         ? "Enter the access code to pick a number."
         : fn.gate === "paid" && fn.priceKobo && !unlocked
           ? `Tap a free number to claim it for ${formatNaira(fn.priceKobo)}.`
-          : "Tap a free number to make it yours.";
+          : anonymous
+            ? "Tap a free number — no name needed. One number per phone."
+            : "Tap a free number to make it yours.";
 
   const total = state.max - state.min + 1;
   const grid = (
@@ -124,12 +135,27 @@ export function NumberPickerCard({
           </div>
         )}
         <div className="flex items-baseline justify-between gap-3">
-          {instructions && <p className="text-sm text-slate">{instructions}</p>}
-          <p className="shrink-0 text-xs text-slate tabular-nums">
+          {instructions && <p className="text-[0.95rem] text-slate">{instructions}</p>}
+          <p className="shrink-0 text-sm text-slate tabular-nums">
             {state.taken.length}/{total} picked
           </p>
         </div>
-        {message && <p className="text-sm font-semibold text-red-600">{message}</p>}
+        {anonNeedsCode && !ended && (
+          <label className="block">
+            <span className="mb-1.5 block font-semibold">Access code</span>
+            <input
+              value={code}
+              onChange={(e) => setCode(e.target.value)}
+              placeholder="Ask the host for the code"
+              className="min-h-12 w-full rounded-[14px] border-2 border-ink/12 bg-surface px-4 outline-none focus:border-ink"
+            />
+          </label>
+        )}
+        {message && (
+          <p role="alert" className="rounded-xl bg-red-50 px-3 py-2 font-medium text-red-800">
+            {message}
+          </p>
+        )}
         {grid}
       </div>
     );

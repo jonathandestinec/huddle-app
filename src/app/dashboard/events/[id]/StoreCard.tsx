@@ -22,26 +22,42 @@ export function StoreCard({
   initial: EditorFunction;
   extra?: React.ReactNode;
 }) {
-  const attached = !!initial.id;
+  const added = !!initial.id;
   const [open, setOpen] = useState(false);
+  const anonymous = initial.type === "number_picker" && !!initial.config.anonymous;
 
   return (
-    <div className={cx("rounded-3xl bg-surface p-5 transition-shadow", attached && "ring-2 ring-huddle-yellow")}>
-      <button type="button" onClick={() => setOpen(!open)} className="flex w-full items-start gap-4 text-left">
-        <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-huddle-yellow/50 text-xl">{emoji}</span>
-        <span className="flex-1">
-          <span className="flex items-center gap-2 font-semibold">
-            {label}
-            {attached && <span className="rounded-full bg-ink px-2 py-0.5 text-[11px] text-paper">{gateBadge[initial.gate]}</span>}
-          </span>
-          <span className="block text-sm text-slate">{description}</span>
+    <div className={cx("rounded-3xl bg-surface shadow-[0_1px_2px_rgba(26,26,26,0.06)]", added && "ring-2 ring-ink")}>
+      <button
+        type="button"
+        aria-expanded={open}
+        onClick={() => setOpen(!open)}
+        aria-label={`${label}: ${added ? "change settings" : "add to event"}`}
+        className="flex w-full items-center gap-4 p-5 text-left"
+      >
+        <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-huddle-yellow/60 text-2xl" aria-hidden>
+          {emoji}
         </span>
-        <span className="text-sm font-semibold">{attached ? (open ? "Close" : "Edit") : open ? "Close" : "Attach +"}</span>
+        <span className="min-w-0 flex-1">
+          <span className="flex flex-wrap items-center gap-2 text-[1.05rem] font-semibold">
+            {label}
+            {added && (
+              <span className="rounded-full bg-ink px-2.5 py-0.5 text-xs font-bold text-paper">
+                ✓ Added · {gateBadge[initial.gate]}
+                {anonymous ? " · Anonymous" : ""}
+              </span>
+            )}
+          </span>
+          <span className="mt-0.5 block text-[0.95rem] text-slate">{description}</span>
+        </span>
+        <span className={cx("shrink-0 rounded-[12px] px-3 py-2 text-sm font-bold", added ? "bg-ink/5" : "bg-huddle-yellow")}>
+          {open ? "Close" : added ? "Change" : "Add"}
+        </span>
       </button>
       {open && (
-        <div className="mt-5 border-t border-ink/10 pt-5">
-          <FunctionEditor eventId={eventId} initial={initial} hasBank={hasBank} onDone={() => !attached && setOpen(false)} />
-          {extra && <div className="mt-6 border-t border-ink/10 pt-5">{extra}</div>}
+        <div className="border-t border-ink/8 px-5 pb-6 pt-5">
+          <FunctionEditor eventId={eventId} initial={initial} hasBank={hasBank} onDone={() => !added && setOpen(false)} />
+          {extra && <div className="mt-8 border-t border-ink/8 pt-6">{extra}</div>}
         </div>
       )}
     </div>

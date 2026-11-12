@@ -45,6 +45,13 @@ function parseConfig(type: FunctionType, config: unknown) {
   return r.data;
 }
 
+/** Anonymous pickers collect no email, and Paystack needs one — so they can't be paid. */
+function assertGateFitsConfig(type: FunctionType, gate: Gate, config: unknown) {
+  if (type === "number_picker" && (config as { anonymous?: boolean }).anonymous && gate === "paid") {
+    throw new UserError("Anonymous picking works with Free or Access code");
+  }
+}
+
 async function loadFunction(functionId: string) {
   const [r] = await db
     .select({ fn: s.eventFunctions, organisationId: s.events.organisationId })
@@ -69,6 +76,7 @@ export async function attachFunction(
   const [ev] = await db.select({ organisationId: s.events.organisationId }).from(s.events).where(eq(s.events.id, eventId));
   if (!ev) throw new UserError("Event not found");
   const config = parseConfig(input.type, input.config);
+  assertGateFitsConfig(input.type, input.gate, config);
   const gate = await gateColumns(ev.organisationId, input);
   const [{ n }] = await db.select({ n: count() }).from(s.eventFunctions).where(eq(s.eventFunctions.eventId, eventId));
   try {
@@ -90,6 +98,7 @@ export async function updateFunction(
   const { fn, organisationId } = await loadFunction(functionId);
   const nextGate = patch.gate ?? fn.gate;
   if (nextGate !== fn.gate && (await hasEntitlements(functionId))) throw new UserError(LOCKED);
+  assertGateFitsConfig(fn.type, nextGate, patch.config ?? fn.config);
 
   const set: Partial<typeof s.eventFunctions.$inferInsert> = {};
   if (patch.config !== undefined) set.config = parseConfig(fn.type, patch.config);

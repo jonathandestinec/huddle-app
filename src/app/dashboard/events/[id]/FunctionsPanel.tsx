@@ -19,8 +19,9 @@ export function FunctionsPanel({
   return (
     <section>
       <h2 className="font-serif text-3xl">
-        Pick what your event needs. <em>Attach it. Done.</em>
+        Pick what your event needs. <em>Add it. Done.</em>
       </h2>
+      <p className="mt-2 text-slate">Tap one to add it. You can change or remove it any time before people start using it.</p>
       <div className="mt-6 space-y-3">
         {ALL_FUNCTION_TYPES.map((type) => {
           const def = getFunctionDefinition(type);

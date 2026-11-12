@@ -1,15 +1,15 @@
 "use client";
 import Link from "next/link";
 import { useState, useTransition } from "react";
-import { Button, Field, Input, cx } from "@/components/ui";
+import { Button, Choice, Field, Input } from "@/components/ui";
 import { attachFunctionAction, removeFunctionAction, updateFunctionAction } from "@/lib/functions/actions";
 import { ConfigFields } from "./ConfigFields";
 import type { FunctionType, Gate } from "./types";
 
-const GATES: { value: Gate; label: string }[] = [
-  { value: "free", label: "Free" },
-  { value: "paid", label: "Paid" },
-  { value: "code", label: "Access code" },
+const GATES: { value: Gate; label: string; hint: string }[] = [
+  { value: "free", label: "Everyone, free", hint: "Anyone with the link." },
+  { value: "paid", label: "People who pay", hint: "They pay with card or transfer." },
+  { value: "code", label: "People with a code", hint: "You share a secret code." },
 ];
 
 export type EditorFunction = {
@@ -63,58 +63,66 @@ export function FunctionEditor({
     });
   }
 
+  const anonymous = initial.type === "number_picker" && !!config.anonymous;
+  const paidBlockedReason = !hasBank ? (
+    <>
+      <Link href="/dashboard/onboarding/bank" className="font-semibold underline">
+        Add your bank account
+      </Link>{" "}
+      first.
+    </>
+  ) : anonymous ? (
+    "Not with anonymous picking — Paystack needs an email."
+  ) : undefined;
+
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
+      <ConfigFields
+        type={initial.type}
+        config={config}
+        onChange={(c) => {
+          setConfig(c);
+          if (initial.type === "number_picker" && c.anonymous && gate === "paid") setGate("free");
+        }}
+      />
       <div>
-        <p className="text-sm font-semibold">Decide who gets in, and how.</p>
-        <div className="mt-2 inline-flex rounded-full bg-ink/5 p-1">
-          {GATES.map((g) => (
-            <button
-              key={g.value}
-              type="button"
-              onClick={() => setGate(g.value)}
-              disabled={g.value === "paid" && !hasBank}
-              className={cx(
-                "rounded-full px-4 py-2 text-sm font-semibold transition-colors duration-150",
-                gate === g.value ? "bg-surface shadow-sm" : "text-slate hover:text-ink",
-                g.value === "paid" && !hasBank && "cursor-not-allowed opacity-40",
-              )}
-            >
-              {g.label}
-            </button>
-          ))}
-        </div>
-        {!hasBank && (
-          <p className="mt-2 text-xs text-slate">
-            <Link href="/dashboard/onboarding/bank" className="underline">
-              Link a bank account
-            </Link>{" "}
-            to charge for this.
-          </p>
-        )}
+        <p className="mb-2 font-semibold">Who can use it?</p>
+        <Choice
+          name="Who can use it"
+          value={gate}
+          onChange={setGate}
+          options={GATES.map((g) => ({
+            ...g,
+            disabled: g.value === "paid" && !!paidBlockedReason,
+            disabledHint: paidBlockedReason,
+          }))}
+        />
       </div>
       {gate === "paid" && (
-        <Field label="Price (₦)" hint="Huddle keeps 5%. Paystack's fee comes out of your share.">
+        <Field label="Price (₦)" hint="Huddle keeps 5%. Paystack's small fee comes out of your share.">
           <Input inputMode="decimal" value={price} onChange={(e) => setPrice(e.target.value)} placeholder="1,000" />
         </Field>
       )}
       {gate === "code" && (
-        <Field label="Access code" hint={initial.hasCode ? "Leave empty to keep the current code" : "At least 4 characters"}>
+        <Field label="Access code" hint={initial.hasCode ? "Leave empty to keep the current code." : "At least 4 letters or numbers. Share it with your members."}>
           <Input value={code} onChange={(e) => setCode(e.target.value)} placeholder={initial.hasCode ? "••••••" : "GRACE2026"} />
         </Field>
       )}
-      <ConfigFields type={initial.type} config={config} onChange={setConfig} />
-      {error && <p className="text-sm text-red-600">{error}</p>}
-      <div className="flex items-center gap-3">
+      {error && (
+        <p role="alert" className="rounded-2xl bg-red-50 px-4 py-3 font-medium text-red-800">
+          {error}
+        </p>
+      )}
+      <div className="flex flex-wrap items-center gap-3">
         <Button onClick={save} disabled={pending}>
-          {pending ? "Saving…" : initial.id ? "Save" : "Attach"}
+          {pending ? "Saving…" : initial.id ? "Save changes" : "Add to event"}
         </Button>
         {initial.id && (
-          <Button variant="ghost" onClick={remove} disabled={pending}>
+          <Button variant="danger" onClick={remove} disabled={pending}>
             Remove
           </Button>
         )}
-        {saved && <span className="text-sm text-slate">Saved ✓</span>}
+        {saved && <span className="font-medium text-emerald-800">Saved ✓</span>}
       </div>
     </div>
   );

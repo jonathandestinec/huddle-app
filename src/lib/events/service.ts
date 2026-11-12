@@ -99,6 +99,20 @@ export async function listOrgEvents(organisationId: string): Promise<Event[]> {
   return db.select().from(s.events).where(eq(s.events.organisationId, organisationId)).orderBy(asc(s.events.startsAt));
 }
 
+/** Events with how many functions each has — enough to suggest the organiser's next step. */
+export async function listOrgEventsWithCounts(organisationId: string): Promise<(Event & { functionCount: number })[]> {
+  const evs = await listOrgEvents(organisationId);
+  if (!evs.length) return [];
+  const fns = await db
+    .select({ eventId: s.eventFunctions.eventId })
+    .from(s.eventFunctions)
+    .innerJoin(s.events, eq(s.events.id, s.eventFunctions.eventId))
+    .where(eq(s.events.organisationId, organisationId));
+  const counts = new Map<string, number>();
+  for (const f of fns) counts.set(f.eventId, (counts.get(f.eventId) ?? 0) + 1);
+  return evs.map((e) => ({ ...e, functionCount: counts.get(e.id) ?? 0 }));
+}
+
 export async function listEventFunctions(eventId: string): Promise<EventFunction[]> {
   return db.select().from(s.eventFunctions).where(eq(s.eventFunctions.eventId, eventId)).orderBy(asc(s.eventFunctions.position));
 }
