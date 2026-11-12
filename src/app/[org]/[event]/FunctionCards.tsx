@@ -1,5 +1,7 @@
 import { getFunctionDefinition } from "@/functions/registry";
 import { IdentityProvider } from "@/functions/IdentifySheet";
+import { NumberPickerCard } from "@/functions/number-picker/AttendeeCard";
+import { getPickerState } from "@/functions/number-picker/logic";
 import { RsvpCard } from "@/functions/rsvp/AttendeeCard";
 import { hasSeat, seatsLeft } from "@/functions/rsvp/logic";
 import type { SessionUser } from "@/lib/auth/session";
@@ -21,6 +23,16 @@ async function renderCard(f: EventFunction, event: Event, viewer: SessionUser | 
           unlocked={unlocked}
           hasSeat={viewer ? await hasSeat(viewer.id, f.id) : false}
           seatsLeft={await seatsLeft(f.id)}
+          ended={ended}
+        />
+      );
+    case "number_picker":
+      return (
+        <NumberPickerCard
+          key={f.id}
+          fn={shell}
+          unlocked={unlocked}
+          initial={await getPickerState(f.id, viewer?.id ?? null)}
           ended={ended}
         />
       );

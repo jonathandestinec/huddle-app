@@ -25,6 +25,7 @@ const definitions: Record<FunctionType, FunctionDefinition<any>> = {
     emoji: "🔢",
     configSchema: numberPickerConfigSchema,
     defaultConfig: { min: 1, max: 100 },
+    onEntitled: (ctx) => import("./number-picker/logic").then((m) => m.numberPickerOnEntitled(ctx)),
   },
   extra_content: {
     type: "extra_content",
