@@ -1,38 +1,20 @@
-"use client";
-import { useSyncExternalStore } from "react";
+/**
+ * The yellow ribbon of function names that winds under the hero (traced from the design, 1312px wide canvas).
+ * Static, like the design. Drawn in design coordinates; the parent positions and scales it.
+ */
+const PATH =
+  "M -30 694 C 110 684, 185 688, 220 740 C 252 790, 248 880, 285 948 C 315 1002, 372 1006, 425 988 C 498 962, 560 924, 640 914 C 702 908, 742 938, 800 984 C 868 1040, 928 1076, 990 1076 C 1052 1076, 1082 1028, 1112 958 C 1142 888, 1205 848, 1340 790";
 
-const WORDS = ["Number Picker", "Forum Access", "Voting & Polls", "Locked Content", "Q&A Queue", "Certificate", "RSVP & Seats", "Shoutout"];
-const TEXT = Array(3).fill(WORDS.join("   ·   ")).join("   ·   ");
+const WORDS = ["Number Picker", "Forum Access", "Voting & Polls", "Locked Content", "Vault", "Hosts", "Q&A Queue", "Certificate", "RSVP & Seats", "Shoutout", "Physical Tickets"];
+const GAP = "    ";
 
-function useReducedMotion() {
-  return useSyncExternalStore(
-    (cb) => {
-      const m = window.matchMedia("(prefers-reduced-motion: reduce)");
-      m.addEventListener("change", cb);
-      return () => m.removeEventListener("change", cb);
-    },
-    () => window.matchMedia("(prefers-reduced-motion: reduce)").matches,
-    () => true,
-  );
-}
-
-/** The yellow wavy band of function names from the design, drifting slowly along its path. */
-export function Ribbon() {
-  const reduced = useReducedMotion();
+export function Ribbon({ className = "" }: { className?: string }) {
   return (
-    <svg viewBox="0 0 1312 420" className="pointer-events-none absolute inset-x-0 bottom-0 -z-0 h-[200px] w-full sm:bottom-auto sm:top-[52%] sm:h-[420px]" aria-hidden="true" preserveAspectRatio="none">
-      <path
-        id="ribbon-path"
-        d="M-40 40 C 120 20, 220 60, 260 160 C 300 270, 360 330, 470 300 C 600 260, 640 240, 760 280 C 900 330, 980 400, 1080 330 C 1180 260, 1230 160, 1360 120"
-        fill="none"
-        stroke="#FFE76C"
-        strokeWidth="46"
-        strokeLinecap="round"
-      />
-      <text fontFamily="var(--font-urbanist)" fontWeight="700" fontSize="22" fill="#1A1A1A" dy="8">
-        <textPath href="#ribbon-path" startOffset="0">
-          {TEXT}
-          {!reduced && <animate attributeName="startOffset" from="0" to="-1600" dur="40s" repeatCount="indefinite" />}
+    <svg viewBox="0 640 1312 470" className={className} aria-hidden="true" preserveAspectRatio="xMidYMid slice">
+      <path id="huddle-ribbon" d={PATH} fill="none" stroke="#FEF16C" strokeWidth="40" strokeLinecap="butt" />
+      <text fontFamily="var(--font-urbanist)" fontWeight="700" fontSize="22" fill="#1A1A1A" dy="7.5">
+        <textPath href="#huddle-ribbon" startOffset="34">
+          {WORDS.join(GAP)}
         </textPath>
       </text>
     </svg>

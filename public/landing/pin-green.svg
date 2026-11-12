@@ -1,0 +1,40 @@
+<svg width="55" height="49" viewBox="0 0 55 49" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g filter="url(#filter0_f_1_1305)">
+<ellipse cx="3.02224" cy="13.2879" rx="3.02224" ry="13.2879" transform="matrix(-0.974975 0.222316 0.222323 0.974973 15.534 10.7148)" fill="#393939" fill-opacity="0.1"/>
+</g>
+<use xlink:href="#stroke0_1_1305" fill="#39C15F"/>
+<use xlink:href="#stroke0_1_1305" fill="url(#paint0_linear_1_1305)"/>
+<use xlink:href="#stroke1_1_1305" fill="#39C15F"/>
+<use xlink:href="#stroke1_1_1305" fill="url(#paint1_linear_1_1305)"/>
+<use xlink:href="#stroke2_1_1305" fill="#39C15F"/>
+<use xlink:href="#stroke2_1_1305" fill="url(#paint2_linear_1_1305)"/>
+<use xlink:href="#stroke3_1_1305" fill="#8F8F8F"/>
+<use xlink:href="#stroke3_1_1305" fill="url(#paint3_linear_1_1305)"/>
+<defs>
+<filter id="filter0_f_1_1305" x="-8.58307e-06" y="8.29697e-05" width="31.0831" height="48.6839" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+<feGaussianBlur stdDeviation="5.68453" result="effect1_foregroundBlur_1_1305"/>
+</filter>
+<linearGradient id="paint0_linear_1_1305" x1="40.3118" y1="30.4135" x2="31.8834" y2="25.7909" gradientUnits="userSpaceOnUse">
+<stop stop-color="white"/>
+<stop offset="1" stop-color="white" stop-opacity="0"/>
+</linearGradient>
+<linearGradient id="paint1_linear_1_1305" x1="52.7757" y1="42.8128" x2="17.3968" y2="33.6789" gradientUnits="userSpaceOnUse">
+<stop stop-color="white"/>
+<stop offset="1" stop-color="white" stop-opacity="0"/>
+</linearGradient>
+<linearGradient id="paint2_linear_1_1305" x1="48.3687" y1="29.6937" x2="33.548" y2="18.393" gradientUnits="userSpaceOnUse">
+<stop stop-color="white"/>
+<stop offset="1" stop-color="white" stop-opacity="0"/>
+</linearGradient>
+<linearGradient id="paint3_linear_1_1305" x1="26.2912" y1="39.246" x2="21.7468" y2="36.0596" gradientUnits="userSpaceOnUse">
+<stop stop-color="white"/>
+<stop offset="1" stop-color="white" stop-opacity="0"/>
+</linearGradient>
+<path id="stroke0_1_1305" d="M37.9673 23.1467L29.0452 17.531L21.773 24.5358L34.7607 32.7106L37.9673 23.1467Z"/>
+<path id="stroke1_1_1305" d="M34.7607 32.7105L21.773 24.5357L17.2459 26.2209C15.039 27.0424 14.7279 30.0303 16.7187 31.2834L30.8319 40.1665C32.8228 41.4196 35.3921 39.853 35.1852 37.5122L34.7607 32.7105Z"/>
+<path id="stroke2_1_1305" d="M43.7238 21.4037C46.0569 20.6972 46.4803 17.5816 44.4193 16.2844L32.476 8.76701C30.4151 7.46983 27.7785 9.19238 28.1438 11.5973L29.0452 17.5311L37.9672 23.1468L43.7238 21.4037Z"/>
+<path id="stroke3_1_1305" d="M21.3658 44.029L25.8082 37.0049L21.7425 34.4458L19.5837 37.8592C19.5837 37.8592 18.9388 38.9183 19.3093 41.3319C19.6799 43.7454 21.3658 44.029 21.3658 44.029Z" fill-rule="evenodd" clip-rule="evenodd"/>
+</defs>
+</svg>

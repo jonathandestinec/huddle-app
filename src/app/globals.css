@@ -27,6 +27,7 @@
 
 html {
   color-scheme: light;
+  scroll-behavior: smooth;
   -webkit-tap-highlight-color: transparent;
   /* 17px base: easier reading for everyone. */
   font-size: 106.25%;
