@@ -18,9 +18,10 @@ export async function settlePayment(reference: string, source: "webhook" | "veri
   const v = await verifyTransaction(reference);
   if (v.status !== "success") {
     if (v.status === "failed" || v.status === "abandoned") {
+      const status: "failed" | "abandoned" = v.status;
       await db
         .update(s.payments)
-        .set({ status: v.status })
+        .set({ status })
         .where(eq(s.payments.paystackReference, reference));
     }
     return "not_successful";
