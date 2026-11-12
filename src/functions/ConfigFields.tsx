@@ -1,5 +1,6 @@
 "use client";
 import { Choice, Field, Input } from "@/components/ui";
+import { pickerMode, type PickerMode } from "./number-picker/config";
 import type { FunctionType } from "./types";
 
 /** Per-function settings shown in the store. Extra Content items are managed separately. */
@@ -34,13 +35,14 @@ export function ConfigFields({
       <div className="space-y-5">
         <div>
           <p className="mb-2 font-semibold">Who&apos;s picking?</p>
-          <Choice
+          <Choice<PickerMode>
             name="Who's picking"
-            value={config.anonymous ? "anonymous" : "named"}
-            onChange={(v) => onChange({ ...config, anonymous: v === "anonymous" })}
+            value={pickerMode(config)}
+            onChange={(v) => onChange({ ...config, mode: v, anonymous: v === "anonymous" })}
             options={[
-              { value: "named", label: "Ask for names", hint: "People give their name and email. You see who holds each number." },
-              { value: "anonymous", label: "Anonymous", hint: "No names or emails — one number per phone. You just see the count." },
+              { value: "named", label: "Ask for names", hint: "Name and email. You see who holds each number." },
+              { value: "private", label: "Email only", hint: "Just an email, for receipts and payment. You never see who's who." },
+              { value: "anonymous", label: "Fully anonymous", hint: "Nothing at all — one number per phone. Free or code only." },
             ]}
           />
         </div>

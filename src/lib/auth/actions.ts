@@ -3,7 +3,7 @@ import { headers } from "next/headers";
 import { identifyAttendee, type IdentifyResult } from "./identify";
 
 export async function identifyAttendeeAction(input: {
-  name: string;
+  name?: string;
   email: string;
   callbackPath: string;
 }): Promise<{ status: Exclude<IdentifyResult["status"], "rate_limited"> } | { status: "error"; message: string }> {

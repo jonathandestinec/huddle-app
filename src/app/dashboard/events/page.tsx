@@ -34,23 +34,20 @@ export default async function EventsPage() {
       {!org.paystackSubaccountCode && (
         <Link
           href="/dashboard/onboarding/bank"
-          className="flex items-center gap-4 rounded-3xl border-2 border-dashed border-ink/15 p-5 [@media(hover:hover)]:hover:border-ink/30"
+          className="flex items-center gap-4 rounded-[28px] bg-mist p-5 transition-colors duration-200 [@media(hover:hover)]:hover:bg-[#ecebe6]"
         >
-          <span className="text-2xl" aria-hidden>
-            💸
-          </span>
           <span>
             <span className="block font-semibold">Want to charge for anything?</span>
             <span className="text-slate">Add your bank account first — it takes a minute.</span>
           </span>
-          <span className="ml-auto font-bold" aria-hidden>
+          <span className="ml-auto text-slate" aria-hidden>
             →
           </span>
         </Link>
       )}
 
       {events.length === 0 ? (
-        <div className="flex flex-col items-center rounded-3xl bg-surface px-6 py-16 text-center">
+        <div className="flex flex-col items-center rounded-[28px] border border-ink/[0.06] bg-surface px-6 py-16 text-center">
           <Penguin mood="wave" size={120} />
           <h2 className="mt-5 font-serif text-3xl">No events yet</h2>
           <p className="mt-2 max-w-sm text-slate">Your first one takes about two minutes. Add a title and a date — you can change anything later.</p>
@@ -72,13 +69,13 @@ function EventList({ title, events }: { title: string; events: Awaited<ReturnTyp
   if (!events.length) return null;
   return (
     <section>
-      <h2 className="mb-3 text-sm font-bold uppercase tracking-[0.14em] text-slate">{title}</h2>
+      <h2 className="mb-3 text-[0.95rem] font-medium text-slate">{title}</h2>
       <ul className="grid gap-3 sm:grid-cols-2">
         {events.map((e) => (
           <li key={e.id}>
             <Link
               href={`/dashboard/events/${e.id}`}
-              className="block h-full rounded-3xl bg-surface p-5 shadow-[0_1px_2px_rgba(26,26,26,0.06)] transition-transform duration-200 ease-[var(--ease-out)] [@media(hover:hover)]:hover:-translate-y-0.5"
+              className="block h-full rounded-[28px] border border-ink/[0.06] bg-surface p-6 transition-[transform,border-color] duration-300 ease-[var(--ease-out)] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-ink/15 [@media(hover:hover)]:hover:-translate-y-0.5 [@media(hover:hover)]:hover:border-ink/15"
             >
               <div className="flex items-center justify-between gap-3">
                 <StatusPill status={e.status} />

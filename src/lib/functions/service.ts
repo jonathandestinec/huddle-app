@@ -45,9 +45,9 @@ function parseConfig(type: FunctionType, config: unknown) {
   return r.data;
 }
 
-/** Anonymous pickers collect no email, and Paystack needs one — so they can't be paid. */
+/** Fully anonymous pickers collect no email, and Paystack needs one — so they can't be paid. Email-only pickers can. */
 function assertGateFitsConfig(type: FunctionType, gate: Gate, config: unknown) {
-  if (type === "number_picker" && (config as { anonymous?: boolean }).anonymous && gate === "paid") {
+  if (type === "number_picker" && gate === "paid" && (parseConfig(type, config) as { anonymous?: boolean }).anonymous) {
     throw new UserError("Anonymous picking works with Free or Access code");
   }
 }

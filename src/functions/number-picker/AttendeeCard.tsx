@@ -7,7 +7,7 @@ import { AttendeeShell, type ShellFunction } from "../AttendeeShell";
 import { useIdentity } from "../IdentifySheet";
 import { claimAnonymousAction, claimNumberAction } from "./actions";
 import { Grid } from "./Grid";
-import type { PickerState } from "./logic";
+import type { PublicPickerState } from "./logic";
 
 export function NumberPickerCard({
   fn,
@@ -17,13 +17,14 @@ export function NumberPickerCard({
 }: {
   fn: ShellFunction;
   unlocked: boolean;
-  initial: PickerState & { anonymous: boolean };
+  initial: PublicPickerState;
   ended: boolean;
 }) {
   const { ensureIdentity } = useIdentity();
-  const { data, refresh } = useLive<PickerState & { anonymous: boolean }>(`/api/functions/${fn.id}/state`, 3000, initial);
+  const { data, refresh } = useLive<PublicPickerState>(`/api/functions/${fn.id}/state`, 3000, initial);
   const state = data ?? initial;
   const anonymous = state.anonymous;
+  const emailOnly = state.mode === "private";
   const [pendingNumber, setPendingNumber] = useState<number | null>(null);
   const [message, setMessage] = useState<string>();
   const [code, setCode] = useState("");
@@ -51,7 +52,7 @@ export function NumberPickerCard({
     }
     // Named pickers: ask who they are OUTSIDE the transition — React holds transition state
     // updates until the action resolves, so a sheet opened inside it would never render.
-    if (!anonymous && !(await ensureIdentity())) return;
+    if (!anonymous && !(await ensureIdentity({ emailOnly }))) return;
     start(async () => {
       setPendingNumber(n);
       const r = anonymous ? await claimAnonymousAction(fn.id, n, code || undefined) : await claimNumberAction(fn.id, n);
@@ -82,6 +83,8 @@ export function NumberPickerCard({
           ? `Tap a free number to claim it for ${formatNaira(fn.priceKobo)}.`
           : anonymous
             ? "Tap a free number — no name needed. One number per phone."
+            : emailOnly
+              ? "Tap a free number. We only ask for your email — the host never sees who picked which."
             : "Tap a free number to make it yours.";
 
   const total = state.max - state.min + 1;
@@ -147,7 +150,7 @@ export function NumberPickerCard({
               value={code}
               onChange={(e) => setCode(e.target.value)}
               placeholder="Ask the host for the code"
-              className="min-h-12 w-full rounded-[14px] border-2 border-ink/12 bg-surface px-4 outline-none focus:border-ink"
+              className="min-h-12 w-full rounded-2xl border border-ink/10 bg-surface px-4 outline-none transition-[border-color,box-shadow] duration-200 focus:border-ink/25 focus:ring-4 focus:ring-ink/[0.05]"
             />
           </label>
         )}
@@ -161,7 +164,7 @@ export function NumberPickerCard({
     );
 
   return (
-    <AttendeeShell fn={fn} unlocked={mine != null} hideUnlock={!needsCode} lockedBody={body}>
+    <AttendeeShell fn={fn} unlocked={mine != null} hideUnlock={!needsCode} lockedBody={body} emailOnly={emailOnly}>
       {body}
     </AttendeeShell>
   );

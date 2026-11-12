@@ -35,7 +35,8 @@ export function EditorSteps({
 
   return (
     <div>
-      <div role="tablist" aria-label="Event steps" className="sticky top-[73px] z-20 -mx-4 mb-6 grid grid-cols-3 gap-1.5 bg-paper/95 px-4 py-2 backdrop-blur sm:flex sm:gap-2">
+      <div role="tablist" aria-label="Event steps" className="sticky top-[73px] z-20 -mx-4 mb-6 bg-paper px-4 py-2">
+        <div className="grid grid-cols-3 gap-1 rounded-full bg-mist p-1 sm:inline-flex">
         {STEPS.map((s, i) => {
           const on = s.id === step;
           return (
@@ -45,17 +46,18 @@ export function EditorSteps({
               aria-selected={on}
               onClick={() => go(s.id)}
               className={cx(
-                "flex min-h-12 items-center justify-center gap-1.5 rounded-[14px] px-2 text-[0.95rem] font-semibold transition-colors duration-150 sm:shrink-0 sm:justify-start sm:gap-2 sm:px-4",
-                on ? "bg-ink text-paper" : "bg-surface text-ink [@media(hover:hover)]:hover:bg-ink/5",
+                "flex min-h-11 items-center justify-center gap-1.5 rounded-full px-2 text-[0.95rem] font-medium transition-[background-color,color] duration-200 sm:shrink-0 sm:justify-start sm:gap-2 sm:px-4",
+                on ? "bg-ink text-white" : "text-slate [@media(hover:hover)]:hover:text-ink",
               )}
             >
-              <span className={cx("flex h-6 w-6 items-center justify-center rounded-full text-xs", on ? "bg-huddle-yellow text-ink" : "bg-ink/8")}>{i + 1}</span>
+              <span className={cx("flex h-6 w-6 items-center justify-center rounded-full text-xs font-semibold transition-colors duration-200", on ? "bg-huddle-yellow text-ink" : "bg-surface/70")}>{i + 1}</span>
               <span className="sm:hidden">{s.short}</span>
               <span className="hidden sm:inline">{s.label}</span>
               {s.id === "functions" && counts.functions > 0 && <span className="hidden text-sm opacity-70 sm:inline">({counts.functions})</span>}
             </button>
           );
         })}
+        </div>
       </div>
 
       <div className="mx-auto max-w-2xl">
@@ -71,7 +73,7 @@ export function EditorSteps({
             <span />
           )}
           {step !== "share" && (
-            <button type="button" onClick={() => go(step === "details" ? "functions" : "share")} className="min-h-12 font-bold">
+            <button type="button" onClick={() => go(step === "details" ? "functions" : "share")} className="min-h-12 rounded-full px-1 font-semibold text-ink/85">
               Next: {step === "details" ? "What people get" : "Share & host"} →
             </button>
           )}

@@ -39,19 +39,19 @@ export function HostLive({ functionId, eventId, title, initial }: { functionId: 
   };
 
   const banner = (big: boolean) => (
-    <div className={cx("rounded-3xl bg-ink text-center text-paper", big ? "p-10" : "p-8")} aria-live="polite">
-      <p className="text-sm font-bold uppercase tracking-[0.2em] text-paper/60">Now calling</p>
+    <div className={cx("rounded-[28px] text-center text-ink", big ? "bg-surface p-10" : "border border-ink/[0.06] bg-surface p-8")} aria-live="polite">
+      <p className="text-[0.95rem] font-medium text-ink/60">Now calling</p>
       <p key={state.called ?? "none"} className="animate-[sheet-in_300ms_var(--ease-drawer)] font-serif text-[clamp(5rem,18vw,14rem)] leading-none tabular-nums">
         {state.called ?? "—"}
       </p>
-      {calledEntry?.name && !big && <p className="mt-2 text-lg text-paper/70">{calledEntry.name}</p>}
+      {calledEntry?.name && !big && <p className="mt-2 text-lg text-ink/70">{calledEntry.name}</p>}
     </div>
   );
 
   if (present) {
     return (
       <div className="fixed inset-0 z-50 flex flex-col items-center justify-center gap-6 bg-huddle-yellow p-8">
-        <p className="font-serif text-4xl italic">{title}</p>
+        <p className="font-serif text-4xl">{title}</p>
         <div className="w-full max-w-4xl">{banner(true)}</div>
         <div className="flex gap-3">
           <Button variant="dark" size="lg" onClick={callNext} disabled={pending || waiting === 0}>
@@ -74,7 +74,7 @@ export function HostLive({ functionId, eventId, title, initial }: { functionId: 
         <h1 className="font-serif text-[2.4rem] leading-none sm:text-5xl">{title}</h1>
         <p className="mt-2 text-slate">
           {picked.length} {picked.length === 1 ? "person has" : "people have"} picked a number
-          {state.anonymous ? " (anonymous)" : ""} · {waiting} still waiting
+          {state.anonymous ? " (anonymous)" : state.hideIdentity ? " (names hidden)" : ""} · {waiting} still waiting
         </p>
       </div>
 
@@ -89,16 +89,16 @@ export function HostLive({ functionId, eventId, title, initial }: { functionId: 
             Undo last call
           </Button>
         )}
-        <Button variant="dark" size="lg" onClick={() => setPresent(true)}>
+        <Button variant="secondary" size="lg" onClick={() => setPresent(true)}>
           Show full screen
         </Button>
       </div>
 
-      {error && <p role="alert" className="rounded-2xl bg-red-50 px-4 py-3 font-medium text-red-800">{error}</p>}
-      {info && <p className="rounded-2xl bg-emerald-50 px-4 py-3 font-medium text-emerald-900">{info}</p>}
+      {error && <p role="alert" className="rounded-2xl bg-[#b4483c]/[0.08] px-4 py-3 font-medium text-[#8f3328]">{error}</p>}
+      {info && <p className="rounded-2xl bg-mist px-4 py-3 font-medium text-ink">{info}</p>}
 
       <section>
-        <h2 className="mb-3 text-sm font-bold uppercase tracking-[0.14em] text-slate">Or tap a number to call it</h2>
+        <h2 className="mb-3 text-[0.95rem] font-medium text-slate">Or tap a number to call it</h2>
         <div className="grid grid-cols-5 gap-2 sm:grid-cols-10">
           {Array.from({ length: state.max - state.min + 1 }, (_, i) => state.min + i).map((n) => {
             const c = byNumber.get(n);
@@ -116,10 +116,10 @@ export function HostLive({ functionId, eventId, title, initial }: { functionId: 
                 aria-label={`Number ${n}${c ? (c.name ? `, ${c.name}` : ", picked") : ", free"}`}
                 className={cx(
                   "flex min-h-14 flex-col items-center justify-center rounded-xl p-1 font-semibold tabular-nums transition-transform duration-150 active:scale-95",
-                  !c && "bg-paper text-ink/25",
-                  c?.status === "held" && "bg-ink/5 text-ink/40",
+                  !c && "bg-surface text-ink/25",
+                  c?.status === "held" && "bg-mist text-ink/40",
                   c?.status === "confirmed" && !isCalled && (c.calledAt ? "bg-huddle-yellow/45" : "bg-huddle-yellow"),
-                  isCalled && "bg-ink text-paper",
+                  isCalled && "bg-ink/85 text-paper",
                 )}
               >
                 {n}

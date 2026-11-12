@@ -42,7 +42,7 @@ export function BankForm({ organisationId, banks }: { organisationId: string; ba
         <Select
           value={bankCode}
           onChange={(e) => setBankCode(e.target.value)}
-          className="w-full rounded-xl border border-ink/15 bg-surface px-4 py-3 outline-none focus:border-ink"
+          className="w-full rounded-2xl border border-ink/10 bg-surface px-4 py-3 outline-none transition-[border-color,box-shadow] duration-200 focus:border-ink/25 focus:ring-4 focus:ring-ink/[0.05]"
         >
           <option value="">Choose your bank</option>
           {banks.map((b) => (
@@ -62,7 +62,7 @@ export function BankForm({ organisationId, banks }: { organisationId: string; ba
         />
       </Field>
       {accountName && (
-        <div className="rounded-2xl bg-huddle-yellow/40 p-4">
+        <div className="rounded-2xl bg-mist p-4">
           <p className="text-sm">
             Paying out to <strong>{accountName}</strong>. Is that right?
           </p>

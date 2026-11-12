@@ -13,7 +13,7 @@ export function SignOutButton({ email }: { email: string }) {
         aria-expanded={open}
         aria-label="Account"
         onClick={() => setOpen(!open)}
-        className="flex h-12 w-12 items-center justify-center rounded-full bg-huddle-yellow font-bold uppercase"
+        className="flex h-12 w-12 items-center justify-center rounded-full bg-ink font-semibold uppercase text-huddle-yellow"
       >
         {email[0]}
       </button>

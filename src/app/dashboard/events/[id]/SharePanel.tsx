@@ -82,15 +82,12 @@ export function SharePanel({
       )}
 
       {status === "published" && hasPicker && (
-        <Link href={`/dashboard/events/${eventId}/live`} className="flex items-center gap-4 rounded-3xl bg-ink p-6 text-paper transition-transform duration-200 [@media(hover:hover)]:hover:-translate-y-0.5">
-          <span className="text-3xl" aria-hidden>
-            🎙️
-          </span>
+        <Link href={`/dashboard/events/${eventId}/live`} className="flex items-center gap-4 rounded-[28px] bg-ink p-6 text-white transition-[transform,background-color] duration-300 ease-[var(--ease-out)] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-ink/15 [@media(hover:hover)]:hover:-translate-y-0.5 [@media(hover:hover)]:hover:bg-ink/90">
           <span>
             <span className="block font-serif text-2xl">Host it live</span>
-            <span className="text-paper/70">Open on the laptop or projector and call numbers out.</span>
+            <span className="text-white/65">Open on the laptop or projector and call numbers out.</span>
           </span>
-          <span className="ml-auto text-xl" aria-hidden>
+          <span className="ml-auto flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-huddle-yellow text-lg text-ink" aria-hidden>
             →
           </span>
         </Link>
@@ -102,8 +99,8 @@ export function SharePanel({
           ["Numbers picked", String(overview.numbersTaken)],
           ["Earned", formatNaira(overview.revenueKobo)],
         ].map(([label, value]) => (
-          <div key={label} className="rounded-3xl bg-surface p-4 sm:p-5">
-            <p className="text-xs font-bold uppercase tracking-wide text-slate">{label}</p>
+          <div key={label} className="rounded-3xl border border-ink/[0.06] bg-surface p-4 sm:p-5">
+            <p className="text-sm font-medium text-slate">{label}</p>
             <p className="mt-1 font-serif text-3xl tabular-nums">{value}</p>
           </div>
         ))}

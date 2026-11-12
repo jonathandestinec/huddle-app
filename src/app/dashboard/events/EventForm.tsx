@@ -93,7 +93,7 @@ export function EventForm({ eventId, initial }: { eventId?: string; initial?: Va
         </p>
       )}
 
-      <div className="sticky bottom-3 z-10 flex items-center gap-3 rounded-[18px] bg-paper/95 p-2 shadow-[0_8px_24px_rgba(26,26,26,0.08)] backdrop-blur sm:static sm:bg-transparent sm:p-0 sm:shadow-none">
+      <div className="sticky bottom-3 z-10 flex items-center gap-3 rounded-full bg-surface p-2 shadow-lift sm:static sm:bg-transparent sm:p-0 sm:shadow-none">
         <Button type="submit" size="lg" disabled={pending} className="flex-1 sm:flex-none">
           {pending ? "Saving…" : eventId ? "Save changes" : "Create event"}
         </Button>

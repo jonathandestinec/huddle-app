@@ -4,7 +4,7 @@ import { beforeEach, describe, expect, it } from "vitest";
 import { db } from "@/lib/db/client";
 import * as s from "@/lib/db/schema";
 import { getHostState, callNextNumber } from "@/functions/number-picker/host";
-import { claimAnonymous, getPickerState } from "@/functions/number-picker/logic";
+import { claimAnonymous, claimNumber, getPickerState } from "@/functions/number-picker/logic";
 import { attachFunction } from "@/lib/functions/service";
 import { makeEvent, makeFunction, makeOrg, makeUser, resetDb } from "./setup";
 
@@ -90,5 +90,32 @@ describe("anonymous Number Picker", () => {
     await expect(
       attachFunction(ev.id, { type: "number_picker", gate: "paid", priceNaira: "500", config: { min: 1, max: 10, anonymous: true } }),
     ).rejects.toThrow("Anonymous picking works with Free or Access code");
+  });
+});
+
+describe("email-only Number Picker", () => {
+  beforeEach(resetDb);
+
+  it("host sees numbers but never names or emails", async () => {
+    const { f, owner } = await anonPicker({ config: { min: 1, max: 50, mode: "private" } });
+    const ada = await makeUser({ name: "Ada Obi" });
+    expect(await claimNumber(ada.id, f.id, 7)).toEqual({ ok: true, status: "confirmed" });
+    const hs = await getHostState(owner.id, f.id);
+    expect(hs.hideIdentity).toBe(true);
+    expect(hs.claims).toEqual([expect.objectContaining({ number: 7, name: null, email: null })]);
+    expect((await getPickerState(f.id, ada.id)).mine).toEqual({ number: 7, status: "confirmed" });
+  });
+
+  it("can be paid (Paystack gets the email)", async () => {
+    const org = await makeOrg({ paystackSubaccountCode: "ACCT_x" });
+    const ev = await makeEvent(org.id);
+    const fn = await attachFunction(ev.id, { type: "number_picker", gate: "paid", priceNaira: "500", config: { min: 1, max: 10, mode: "private" } });
+    const [row] = await db.select().from(s.eventFunctions).where(eq(s.eventFunctions.id, fn.id));
+    expect(row.gate).toBe("paid");
+  });
+
+  it("older configs with only `anonymous` still read correctly", async () => {
+    const { f } = await anonPicker();
+    expect((await getPickerState(f.id, null)).mode).toBe("anonymous");
   });
 });

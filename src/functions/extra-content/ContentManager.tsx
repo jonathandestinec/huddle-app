@@ -75,7 +75,7 @@ export function ContentManager({ functionId, items }: { functionId: string; item
           setDrag(false);
           void upload(e.dataTransfer.files);
         }}
-        className={`block cursor-pointer rounded-2xl border-2 border-dashed p-6 text-center text-sm transition-colors ${drag ? "border-ink bg-huddle-yellow/30" : "border-ink/15"}`}
+        className={`block cursor-pointer rounded-3xl border border-dashed p-6 text-center text-sm transition-colors duration-200 ${drag ? "border-ink/30 bg-mist" : "border-ink/15 bg-paper/60"}`}
       >
         <input type="file" multiple className="hidden" accept=".pdf,.mp3,.m4a,.mp4,.mov,.jpg,.jpeg,.png" onChange={(e) => upload(e.target.files)} />
         {progress != null ? `Uploading… ${Math.round(progress * 100)}%` : "Drop files here or tap to upload (up to 500 MB)"}

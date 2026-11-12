@@ -19,7 +19,7 @@ export function FunctionsPanel({
   return (
     <section>
       <h2 className="font-serif text-3xl">
-        Pick what your event needs. <em>Add it. Done.</em>
+        Pick what your event needs
       </h2>
       <p className="mt-2 text-slate">Tap one to add it. You can change or remove it any time before people start using it.</p>
       <div className="mt-6 space-y-3">
@@ -46,10 +46,10 @@ export function FunctionsPanel({
             />
           );
         })}
-        <p className="pt-4 text-xs font-bold uppercase tracking-wide text-slate">Coming soon</p>
+        <p className="pt-4 text-[0.95rem] font-medium text-slate">Coming soon</p>
         <div className="grid gap-3 sm:grid-cols-2">
           {COMING_SOON.map((c) => (
-            <div key={c.label} className="rounded-2xl border border-dashed border-ink/15 p-4 opacity-70">
+            <div key={c.label} className="rounded-3xl bg-ink/[0.03] p-4 opacity-75">
               <p className="font-semibold">
                 {c.emoji} {c.label}
               </p>

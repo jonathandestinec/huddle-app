@@ -4,6 +4,7 @@ import { useState, useTransition } from "react";
 import { Button, Choice, Field, Input } from "@/components/ui";
 import { attachFunctionAction, removeFunctionAction, updateFunctionAction } from "@/lib/functions/actions";
 import { ConfigFields } from "./ConfigFields";
+import { pickerMode } from "./number-picker/config";
 import type { FunctionType, Gate } from "./types";
 
 const GATES: { value: Gate; label: string; hint: string }[] = [
@@ -63,7 +64,7 @@ export function FunctionEditor({
     });
   }
 
-  const anonymous = initial.type === "number_picker" && !!config.anonymous;
+  const anonymous = initial.type === "number_picker" && pickerMode(config) === "anonymous";
   const paidBlockedReason = !hasBank ? (
     <>
       <Link href="/dashboard/onboarding/bank" className="font-semibold underline">
@@ -72,7 +73,7 @@ export function FunctionEditor({
       first.
     </>
   ) : anonymous ? (
-    "Not with anonymous picking — Paystack needs an email."
+    "Not with fully anonymous picking — Paystack needs an email. Choose “Email only” instead."
   ) : undefined;
 
   return (
@@ -82,7 +83,7 @@ export function FunctionEditor({
         config={config}
         onChange={(c) => {
           setConfig(c);
-          if (initial.type === "number_picker" && c.anonymous && gate === "paid") setGate("free");
+          if (initial.type === "number_picker" && pickerMode(c) === "anonymous" && gate === "paid") setGate("free");
         }}
       />
       <div>

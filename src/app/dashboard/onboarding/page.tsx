@@ -8,10 +8,8 @@ export default async function OnboardingPage() {
   if ((await getMyOrganisations(user.id)).length > 0) redirect("/dashboard/onboarding/bank");
   return (
     <div className="mx-auto max-w-md">
-      <p className="text-sm font-semibold text-slate">Step 1 of 2</p>
-      <h1 className="mt-2 font-serif text-4xl leading-tight">
-        Create your organisation — <em>it takes 2 minutes.</em>
-      </h1>
+      <h1 className="font-serif text-4xl leading-tight">Create your organisation</h1>
+      <p className="mt-2 text-slate">The first of two short steps. It takes about two minutes.</p>
       <CreateOrgForm />
     </div>
   );

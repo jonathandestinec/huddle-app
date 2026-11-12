@@ -8,15 +8,12 @@ export default async function BankPage() {
   const banks = await listBanks().catch(() => []);
   return (
     <div className="mx-auto max-w-md">
-      <p className="text-sm font-semibold text-slate">Step 2 of 2</p>
-      <h1 className="mt-2 font-serif text-4xl leading-tight">
-        Where should we send <em>your earnings?</em>
-      </h1>
+      <h1 className="font-serif text-4xl leading-tight">Where should we send your earnings?</h1>
       <p className="mt-2 text-slate">
         When people pay for something at your events, your share goes straight to this account. Huddle keeps 5%.
       </p>
       {org.paystackSubaccountCode ? (
-        <div className="mt-8 rounded-2xl bg-surface p-5">
+        <div className="mt-8 rounded-3xl border border-ink/[0.06] bg-surface p-5">
           <p className="font-semibold">You&apos;re all set ✓</p>
           <p className="text-sm text-slate">
             Paying out to {org.bankName} ••••{org.accountLast4}

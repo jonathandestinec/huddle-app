@@ -24,6 +24,7 @@ export function AttendeeShell({
   paidCta,
   onFree,
   hideUnlock,
+  emailOnly,
 }: {
   fn: ShellFunction;
   unlocked: boolean;
@@ -34,6 +35,8 @@ export function AttendeeShell({
   onFree?: () => Promise<ActionResult>;
   /** Function handles unlocking itself (e.g. Number Picker pays per pick). */
   hideUnlock?: boolean;
+  /** Ask only for an email (private Number Picker). */
+  emailOnly?: boolean;
 }) {
   const router = useRouter();
   const { ensureIdentity } = useIdentity();
@@ -44,7 +47,7 @@ export function AttendeeShell({
   const run = async (fnc: () => Promise<ActionResult | { ok: true; data: { authorizationUrl: string } }>) => {
     setError(undefined);
     // Identity first, outside the transition (state set inside an async transition is held until it ends).
-    if (!(await ensureIdentity())) return;
+    if (!(await ensureIdentity({ emailOnly }))) return;
     start(async () => {
       const r = await fnc();
       if (!r.ok) {
@@ -69,13 +72,13 @@ export function AttendeeShell({
         : "Free";
 
   return (
-    <section className="rounded-3xl bg-surface p-5 shadow-[0_1px_2px_rgba(26,26,26,0.06)]">
+    <section className="rounded-[28px] border border-ink/[0.06] bg-surface p-5">
       <header className="flex items-center gap-3">
         <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-huddle-yellow/60 text-2xl" aria-hidden>
           {fn.emoji}
         </span>
-        <h2 className="flex-1 text-[1.15rem] font-bold">{fn.label}</h2>
-        <span className={`rounded-full px-3 py-1 text-sm font-bold ${unlocked ? "bg-huddle-yellow" : "bg-ink/5"}`}>{badge}</span>
+        <h2 className="flex-1 text-[1.15rem] font-semibold">{fn.label}</h2>
+        <span className={`rounded-full px-3 py-1 text-sm font-semibold ${unlocked ? "bg-huddle-yellow" : "bg-ink/5"}`}>{badge}</span>
       </header>
       <div className="mt-5">
         {unlocked ? children : lockedBody}

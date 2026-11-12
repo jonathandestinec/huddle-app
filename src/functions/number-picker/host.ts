@@ -38,6 +38,8 @@ export type HostState = {
   min: number;
   max: number;
   anonymous: boolean;
+  /** Email-only picking: people are identified to Huddle (for payment) but never to the host. */
+  hideIdentity: boolean;
 };
 
 /** Calls the lowest picked number that hasn't been called yet. Returns it, or null when everyone's been called. */
@@ -70,12 +72,14 @@ export async function getHostState(userId: string, functionId: string): Promise<
     .where(eq(s.numberClaims.eventFunctionId, functionId))
     .orderBy(asc(s.numberClaims.number));
   const now = Date.now();
-  const { called, min, max, anonymous } = await getPickerState(functionId, null);
+  const { called, min, max, anonymous, mode } = await getPickerState(functionId, null);
+  const hideIdentity = mode !== "named";
   return {
     anonymous,
+    hideIdentity,
     claims: rows
       .filter((r) => r.status === "confirmed" || (r.holdExpiresAt && r.holdExpiresAt.getTime() > now))
-      .map(({ holdExpiresAt: _, ...r }) => r),
+      .map(({ holdExpiresAt: _, name, email, ...r }) => (hideIdentity ? { ...r, name: null, email: null } : { ...r, name, email })),
     called,
     min,
     max,

@@ -16,7 +16,7 @@ export const attendeePlugin = () =>
         "/attendee/identify",
         {
           method: "POST",
-          body: z.object({ name: z.string().trim().min(1).max(100), email: z.email() }),
+          body: z.object({ name: z.string().trim().max(100).optional(), email: z.email() }),
         },
         async (ctx) => {
           const email = ctx.body.email.trim().toLowerCase();
@@ -25,7 +25,7 @@ export const attendeePlugin = () =>
             throw new APIError("CONFLICT", { message: "EMAIL_EXISTS" });
           }
           const user = await adapter.createUser(
-            { email, name: ctx.body.name, emailVerified: false },
+            { email, name: ctx.body.name || email.split("@")[0], emailVerified: false },
             { method: "huddle-attendee" },
           );
           const session = await adapter.createSession(user.id);

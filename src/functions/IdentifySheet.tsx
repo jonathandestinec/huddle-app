@@ -3,7 +3,8 @@ import { createContext, useCallback, useContext, useRef, useState } from "react"
 import { Button, Field, Input } from "@/components/ui";
 import { identifyAttendeeAction } from "@/lib/auth/actions";
 
-type Ctx = { signedIn: boolean; ensureIdentity: () => Promise<boolean> };
+type IdentifyOptions = { emailOnly?: boolean };
+type Ctx = { signedIn: boolean; ensureIdentity: (opts?: IdentifyOptions) => Promise<boolean> };
 const IdentityContext = createContext<Ctx>({ signedIn: false, ensureIdentity: async () => false });
 export const useIdentity = () => useContext(IdentityContext);
 
@@ -20,14 +21,19 @@ export function IdentityProvider({ signedIn: initial, callbackPath, children }: 
   const [email, setEmail] = useState("");
   const [error, setError] = useState<string>();
   const [pending, setPending] = useState(false);
+  const [emailOnly, setEmailOnly] = useState(false);
   const resolver = useRef<((ok: boolean) => void) | null>(null);
 
-  const ensureIdentity = useCallback(() => {
-    if (signedIn) return Promise.resolve(true);
-    setOpen(true);
-    setSent(false);
-    return new Promise<boolean>((res) => (resolver.current = res));
-  }, [signedIn]);
+  const ensureIdentity = useCallback(
+    (opts?: IdentifyOptions) => {
+      if (signedIn) return Promise.resolve(true);
+      setEmailOnly(!!opts?.emailOnly);
+      setOpen(true);
+      setSent(false);
+      return new Promise<boolean>((res) => (resolver.current = res));
+    },
+    [signedIn],
+  );
 
   function close(ok: boolean) {
     setOpen(false);
@@ -39,7 +45,7 @@ export function IdentityProvider({ signedIn: initial, callbackPath, children }: 
     e.preventDefault();
     setPending(true);
     setError(undefined);
-    const r = await identifyAttendeeAction({ name, email, callbackPath });
+    const r = await identifyAttendeeAction({ name: emailOnly ? undefined : name, email, callbackPath });
     setPending(false);
     if (r.status === "signed_in") {
       setSignedIn(true);
@@ -74,12 +80,16 @@ export function IdentityProvider({ signedIn: initial, callbackPath, children }: 
               <form onSubmit={submit} className="space-y-4">
                 <div>
                   <p className="font-serif text-3xl">Who&apos;s joining?</p>
-                  <p className="text-sm text-slate">Just your name and email — no password.</p>
+                  <p className="text-sm text-slate">
+                    {emailOnly ? "Just your email — no password. The host never sees it or who picked which number." : "Just your name and email — no password."}
+                  </p>
                 </div>
-                <Field label="Your name">
-                  <Input required autoComplete="name" value={name} onChange={(e) => setName(e.target.value)} />
-                </Field>
-                <Field label="Email" error={error}>
+                {!emailOnly && (
+                  <Field label="Your name">
+                    <Input required autoComplete="name" value={name} onChange={(e) => setName(e.target.value)} />
+                  </Field>
+                )}
+                <Field label="Email" hint={emailOnly ? "Used for your receipt and payment only." : undefined} error={error}>
                   <Input required type="email" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} />
                 </Field>
                 <Button type="submit" disabled={pending} className="w-full">

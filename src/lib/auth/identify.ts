@@ -8,7 +8,8 @@ import { auth } from "./server";
 const WINDOW = 10 * 60 * 1000;
 
 const input = z.object({
-  name: z.string().trim().min(1).max(100),
+  /** Optional: email-only pickers never ask. The account then gets a name from the email, seen only by its owner. */
+  name: z.string().trim().max(100).optional(),
   email: z.string().trim().toLowerCase().pipe(z.email()),
   // Same-site paths only: "/x" yes, "//evil.com" and "/\evil.com" no.
   callbackPath: z.string().regex(/^\/(?![/\\])/, "Invalid return path"),
@@ -28,7 +29,8 @@ async function sendMagicLink(email: string, callbackPath: string, headers: Heade
  * Accounts made here stay unverified until the email is proven, and unverified accounts can't own organisations.
  */
 export async function identifyAttendee(raw: z.input<typeof input>, headers: Headers): Promise<IdentifyResult> {
-  const { name, email, callbackPath } = input.parse(raw);
+  const { name: given, email, callbackPath } = input.parse(raw);
+  const name = given || email.split("@")[0];
   if (!(await consumeRateLimit([{ key: `identify-ip:${clientIp(headers)}`, limit: 10 }], WINDOW))) {
     return { status: "rate_limited" };
   }

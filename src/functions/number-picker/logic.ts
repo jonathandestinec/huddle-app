@@ -9,7 +9,7 @@ import { getFunctionWithEvent } from "@/lib/functions/service";
 import { grantEntitlement, hasEntitlement } from "@/lib/gating/access";
 import { startPaidUnlock } from "@/lib/payments/start";
 import type { EntitledContext } from "../types";
-import { numberPickerConfigSchema } from "./config";
+import { numberPickerConfigSchema, type PickerMode } from "./config";
 
 export const HOLD_MS = 10 * 60 * 1000;
 
@@ -225,9 +225,11 @@ export type PickerState = {
   called: number | null;
 };
 
-export async function getPickerState(functionId: string, viewerId: string | null, deviceHash?: string | null): Promise<PickerState & { anonymous: boolean }> {
+export type PublicPickerState = PickerState & { anonymous: boolean; mode: PickerMode };
+
+export async function getPickerState(functionId: string, viewerId: string | null, deviceHash?: string | null): Promise<PublicPickerState> {
   const [fn] = await db.select().from(s.eventFunctions).where(eq(s.eventFunctions.id, functionId));
-  const { min, max, anonymous } = numberPickerConfigSchema.parse(fn.config);
+  const { min, max, anonymous, mode } = numberPickerConfigSchema.parse(fn.config);
   const now = Date.now();
   const rows = (await db.select().from(s.numberClaims).where(eq(s.numberClaims.eventFunctionId, functionId))).filter(
     (c) => c.status === "confirmed" || (c.holdExpiresAt && c.holdExpiresAt.getTime() > now),
@@ -242,6 +244,7 @@ export async function getPickerState(functionId: string, viewerId: string | null
   const calledRow = rows.filter((c) => c.calledAt).sort((a, b) => b.calledAt!.getTime() - a.calledAt!.getTime())[0];
   return {
     anonymous,
+    mode,
     min,
     max,
     taken: rows.map((c) => c.number).sort((a, b) => a - b),

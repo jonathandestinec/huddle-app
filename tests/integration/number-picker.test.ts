@@ -135,7 +135,7 @@ describe("getPickerState", () => {
     await claimNumber(a.id, f.id, 3);
     await claimNumber(b.id, f.id, 9);
     await db.update(s.numberClaims).set({ calledAt: new Date() }).where(eq(s.numberClaims.number, 9));
-    expect(await getPickerState(f.id, a.id)).toEqual({ anonymous: false, min: 1, max: 500, taken: [3, 9], mine: { number: 3, status: "confirmed" }, called: 9 });
+    expect(await getPickerState(f.id, a.id)).toEqual({ anonymous: false, mode: "named", min: 1, max: 500, taken: [3, 9], mine: { number: 3, status: "confirmed" }, called: 9 });
   });
 
   it("does not count expired holds as taken", async () => {
