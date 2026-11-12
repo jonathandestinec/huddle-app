@@ -1,11 +1,62 @@
+import { ALL_FUNCTION_TYPES, COMING_SOON, getFunctionDefinition } from "@/functions/registry";
 import type { Event, EventFunction } from "@/lib/events/service";
+import { koboToNairaInput } from "@/lib/money";
+import { StoreCard } from "./StoreCard";
 
-/** Placeholder — replaced by the Function Store in Task 8. */
-export function FunctionsPanel({ functions }: { event: Event; functions: EventFunction[]; hasBank: boolean }) {
+export function FunctionsPanel({
+  event,
+  functions,
+  hasBank,
+  extras,
+}: {
+  event: Event;
+  functions: EventFunction[];
+  hasBank: boolean;
+  /** Per-function extra panels (e.g. Extra Content's item manager), keyed by function id. */
+  extras?: Record<string, React.ReactNode>;
+}) {
+  const attached = new Map(functions.map((f) => [f.type, f]));
   return (
     <section>
-      <h2 className="mb-4 text-sm font-bold uppercase tracking-wide text-slate">Functions</h2>
-      <p className="text-slate">{functions.length} attached</p>
+      <h2 className="font-serif text-3xl">
+        Pick what your event needs. <em>Attach it. Done.</em>
+      </h2>
+      <div className="mt-6 space-y-3">
+        {ALL_FUNCTION_TYPES.map((type) => {
+          const def = getFunctionDefinition(type);
+          const f = attached.get(type);
+          return (
+            <StoreCard
+              key={type}
+              eventId={event.id}
+              hasBank={hasBank}
+              label={def.label}
+              description={def.description}
+              emoji={def.emoji}
+              initial={{
+                id: f?.id,
+                type,
+                gate: f?.gate ?? "free",
+                priceNaira: koboToNairaInput(f?.priceKobo ?? null),
+                config: (f?.config as Record<string, unknown>) ?? def.defaultConfig,
+                hasCode: !!f?.accessCodeHash,
+              }}
+              extra={f ? extras?.[f.id] : undefined}
+            />
+          );
+        })}
+        <p className="pt-4 text-xs font-bold uppercase tracking-wide text-slate">Coming soon</p>
+        <div className="grid gap-3 sm:grid-cols-2">
+          {COMING_SOON.map((c) => (
+            <div key={c.label} className="rounded-2xl border border-dashed border-ink/15 p-4 opacity-70">
+              <p className="font-semibold">
+                {c.emoji} {c.label}
+              </p>
+              <p className="text-sm text-slate">{c.description}</p>
+            </div>
+          ))}
+        </div>
+      </div>
     </section>
   );
 }
