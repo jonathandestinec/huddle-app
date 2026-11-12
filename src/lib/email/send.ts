@@ -17,7 +17,7 @@ export async function sendEmail(input: { to: string; subject: string; react: Rea
   const env = getEnv();
   const html = await render(input.react);
 
-  if (env.RESEND_API_KEY === "REPLACE_ME") {
+  if (env.RESEND_API_KEY === "REPLACE_ME" || process.env.EMAIL_DEV_OUTBOX === "1") {
     const links = [...html.matchAll(/href="([^"]+)"/g)].map((m) => m[1].replaceAll("&amp;", "&"));
     devOutbox().push({ to: input.to, subject: input.subject, links, at: new Date() });
     console.info(`[dev email] to=${input.to} subject="${input.subject}"\n  ${links.join("\n  ")}`);
