@@ -30,11 +30,13 @@ export function NumberPickerCard({
   const needsCode = fn.gate === "code" && !unlocked;
   const isCalled = mine != null && state.called === mine;
 
-  function pick(n: number) {
+  async function pick(n: number) {
     if (mine != null || ended || needsCode || busy) return;
     setMessage(undefined);
+    // Ask who they are OUTSIDE the transition: React holds transition state updates
+    // until the action resolves, so a sheet opened inside it would never render.
+    if (!(await ensureIdentity())) return;
     start(async () => {
-      if (!(await ensureIdentity())) return;
       setPendingNumber(n);
       const r = await claimNumberAction(fn.id, n);
       if (!r.ok) {

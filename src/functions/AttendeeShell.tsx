@@ -40,10 +40,11 @@ export function AttendeeShell({
   const [error, setError] = useState<string>();
   const [pending, start] = useTransition();
 
-  const run = (fnc: () => Promise<ActionResult | { ok: true; data: { authorizationUrl: string } }>) =>
+  const run = async (fnc: () => Promise<ActionResult | { ok: true; data: { authorizationUrl: string } }>) => {
+    setError(undefined);
+    // Identity first, outside the transition (state set inside an async transition is held until it ends).
+    if (!(await ensureIdentity())) return;
     start(async () => {
-      setError(undefined);
-      if (!(await ensureIdentity())) return;
       const r = await fnc();
       if (!r.ok) return setError(r.error);
       if ("data" in r && r.data?.authorizationUrl) {
@@ -52,6 +53,7 @@ export function AttendeeShell({
       }
       router.refresh();
     });
+  };
 
   const badge = unlocked
     ? "✓ You're in"
