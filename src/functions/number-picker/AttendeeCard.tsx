@@ -73,34 +73,66 @@ export function NumberPickerCard({
           ? `Tap a free number to claim it for ${formatNaira(fn.priceKobo)}.`
           : "Tap a free number to make it yours.";
 
-  const body = (
-      <div className="space-y-3">
-        {state.called != null && (
-          <div className={`rounded-2xl p-4 text-center ${isCalled ? "animate-pulse bg-huddle-yellow" : "bg-ink text-paper"}`}>
-            <p className="text-xs uppercase tracking-wide opacity-70">Now calling</p>
-            <p className="font-serif text-5xl">#{state.called}</p>
-            {isCalled && <p className="mt-1 font-bold">That&apos;s you! 🎉</p>}
-          </div>
-        )}
-        {mine != null && (
-          <p className="text-center">
-            Your number is <span className="font-serif text-4xl">#{mine}</span>
+  const total = state.max - state.min + 1;
+  const grid = (
+    <Grid
+      min={state.min}
+      max={state.max}
+      taken={taken}
+      mine={mine}
+      pending={pendingNumber}
+      called={state.called}
+      disabled={mine != null || ended || needsCode}
+      onPick={pick}
+    />
+  );
+
+  const body =
+    mine != null ? (
+      <div className="space-y-4">
+        <div
+          className={`rounded-2xl px-6 py-7 text-center transition-colors duration-300 ${isCalled ? "bg-ink text-paper" : "bg-huddle-yellow text-ink"}`}
+          aria-live="polite"
+        >
+          <p className="text-xs font-bold uppercase tracking-[0.18em] opacity-70">{isCalled ? "It's your turn" : "Your number"}</p>
+          <p className="mt-1 font-serif text-[5.5rem] leading-none tabular-nums">{mine}</p>
+          <p className="mx-auto mt-3 max-w-[16rem] text-sm opacity-80">
+            {isCalled ? "The host just called your number. 🎉" : "Keep this page open — it lights up when your number is called."}
+          </p>
+        </div>
+        {state.called != null && !isCalled && (
+          <p className="text-center text-sm text-slate">
+            Now calling <strong className="text-ink">#{state.called}</strong>
           </p>
         )}
-        {instructions && <p className="text-sm text-slate">{instructions}</p>}
-        {message && <p className="text-sm font-semibold text-red-600">{message}</p>}
-        <Grid
-          min={state.min}
-          max={state.max}
-          taken={taken}
-          mine={mine}
-          pending={pendingNumber}
-          called={state.called}
-          disabled={mine != null || ended || needsCode}
-          onPick={pick}
-        />
+        <details className="group rounded-2xl bg-paper px-4 py-3">
+          <summary className="flex cursor-pointer list-none items-center justify-between text-sm font-semibold">
+            See all numbers
+            <span className="text-slate">
+              {state.taken.length} of {total} picked <span className="inline-block transition-transform group-open:rotate-180">⌄</span>
+            </span>
+          </summary>
+          <div className="mt-3">{grid}</div>
+        </details>
       </div>
-  );
+    ) : (
+      <div className="space-y-3">
+        {state.called != null && (
+          <div className="rounded-2xl bg-ink p-4 text-center text-paper">
+            <p className="text-xs uppercase tracking-wide opacity-70">Now calling</p>
+            <p className="font-serif text-5xl">#{state.called}</p>
+          </div>
+        )}
+        <div className="flex items-baseline justify-between gap-3">
+          {instructions && <p className="text-sm text-slate">{instructions}</p>}
+          <p className="shrink-0 text-xs text-slate tabular-nums">
+            {state.taken.length}/{total} picked
+          </p>
+        </div>
+        {message && <p className="text-sm font-semibold text-red-600">{message}</p>}
+        {grid}
+      </div>
+    );
 
   return (
     <AttendeeShell fn={fn} unlocked={mine != null} hideUnlock={!needsCode} lockedBody={body}>

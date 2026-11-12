@@ -41,7 +41,8 @@ test("organiser sets up an event, attendee claims a number, host calls it", asyn
   await attendee.locator('input[autocomplete="name"]').fill("Grace Eze");
   await attendee.locator('input[autocomplete="email"]').fill(`grace-${id}@huddle.test`);
   await attendee.getByRole("button", { name: "Continue" }).click();
-  await expect(attendee.getByText(/Your number is\s*#42/)).toBeVisible({ timeout: 20_000 });
+  await expect(attendee.getByText("Your number", { exact: true })).toBeVisible({ timeout: 20_000 });
+  await expect(attendee.locator('[aria-live="polite"]')).toContainText("42");
 
   await attendee.getByRole("button", { name: "Reserve my seat" }).click();
   await expect(attendee.getByText("You're on the list ✓")).toBeVisible({ timeout: 20_000 });
@@ -49,7 +50,7 @@ test("organiser sets up an event, attendee claims a number, host calls it", asyn
   // ── Host calls #42; attendee sees it live ──
   await page.goto(`${eventUrl}/live`);
   await page.getByRole("button", { name: /^42/ }).click();
-  await expect(attendee.getByText("That's you! 🎉")).toBeVisible({ timeout: 10_000 });
+  await expect(attendee.getByText("It's your turn")).toBeVisible({ timeout: 10_000 });
 
   await attendeeCtx.close();
 });
