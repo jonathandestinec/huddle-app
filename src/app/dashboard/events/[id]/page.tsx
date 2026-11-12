@@ -11,11 +11,12 @@ import { formatEventTime, utcToLagosLocal } from "@/lib/events/time";
 import { EventForm } from "../EventForm";
 import { EditorSteps, type StepId } from "./EditorSteps";
 import { FunctionsPanel } from "./FunctionsPanel";
+import { DuplicateEventButton } from "./DuplicateEventButton";
 import { SharePanel } from "./SharePanel";
 
 export default async function EventEditorPage({ params, searchParams }: PageProps<"/dashboard/events/[id]">) {
   const { id } = await params;
-  const { step } = await searchParams;
+  const { step, copied } = await searchParams;
   const ev = await getEventById(id);
   if (!ev) notFound();
   await requireOrgOwner(ev.organisationId);
@@ -41,9 +42,18 @@ export default async function EventEditorPage({ params, searchParams }: PageProp
         <div className="mt-1 flex flex-wrap items-center gap-3">
           <h1 className="font-serif text-[2.4rem] leading-none sm:text-5xl">{ev.title}</h1>
           <StatusPill status={ev.status} />
+          <span className="ml-auto">
+            <DuplicateEventButton eventId={ev.id} />
+          </span>
         </div>
         <p className="mt-2 text-slate">{formatEventTime(ev.startsAt)}</p>
       </div>
+
+      {copied && (
+        <p role="status" className="rounded-2xl bg-huddle-yellow/30 px-4 py-3 font-medium">
+          This is your copy. Check the date and details, then publish it when you&apos;re ready.
+        </p>
+      )}
 
       <EditorSteps
         initial={initialStep}

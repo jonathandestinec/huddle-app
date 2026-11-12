@@ -3,7 +3,7 @@ import { revalidatePath } from "next/cache";
 import { requireOrgOwner } from "@/lib/auth/session";
 import { UserError, toActionResult } from "@/lib/errors";
 import { requireCurrentOrg } from "@/lib/orgs/current";
-import { createEvent, endEvent, getEventById, publishEvent, updateEvent, type EventInput } from "./service";
+import { createEvent, duplicateEvent, endEvent, getEventById, publishEvent, updateEvent, type EventInput } from "./service";
 
 async function ownEvent(eventId: string) {
   const ev = await getEventById(eventId);
@@ -40,5 +40,15 @@ export async function endEventAction(eventId: string) {
     await ownEvent(eventId);
     await endEvent(eventId);
     revalidatePath(`/dashboard/events/${eventId}`);
+  });
+}
+
+/** Copies an event (any status) as a new draft and returns its id. */
+export async function duplicateEventAction(eventId: string) {
+  return toActionResult(async () => {
+    await ownEvent(eventId);
+    const copy = await duplicateEvent(eventId);
+    revalidatePath("/dashboard/events");
+    return copy;
   });
 }

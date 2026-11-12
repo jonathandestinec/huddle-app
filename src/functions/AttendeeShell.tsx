@@ -72,7 +72,7 @@ export function AttendeeShell({
         : "Free";
 
   return (
-    <section className="rounded-[28px] border border-ink/[0.06] bg-surface p-5">
+    <section className="rounded-[28px] border border-ink/[0.12] bg-surface p-5">
       <header className="flex items-center gap-3">
         <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-huddle-yellow/60 text-2xl" aria-hidden>
           {fn.emoji}

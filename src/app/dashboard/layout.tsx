@@ -10,7 +10,7 @@ export default async function DashboardLayout({ children }: LayoutProps<"/dashbo
   const [org] = await getMyOrganisations(user.id);
   return (
     <div className="flex min-h-full flex-1 flex-col">
-      <header className="sticky top-0 z-30 border-b border-ink/[0.06] bg-paper">
+      <header className="sticky top-0 z-30 border-b border-ink/[0.12] bg-paper">
         <div className="mx-auto flex max-w-5xl items-center gap-4 px-4 py-3">
           <Link href="/dashboard" className="flex min-h-12 items-center gap-2 font-semibold">
             <Penguin size={30} />
@@ -19,12 +19,12 @@ export default async function DashboardLayout({ children }: LayoutProps<"/dashbo
           <nav className="ml-auto flex items-center gap-1 text-[0.95rem]">
             {org && (
               <>
-                <Link href="/dashboard/events" className="hidden min-h-12 items-center rounded-full px-4 font-medium text-ink/80 transition-colors sm:flex [@media(hover:hover)]:hover:bg-mist [@media(hover:hover)]:hover:text-ink">
+                <Link href="/dashboard/events" className="hidden min-h-12 items-center rounded-full px-4 font-medium text-ink transition-colors sm:flex [@media(hover:hover)]:hover:bg-mist [@media(hover:hover)]:hover:text-ink">
                   Events
                 </Link>
                 <Link
                   href="/dashboard/onboarding/bank"
-                  className="hidden min-h-12 items-center rounded-full px-4 font-medium text-ink/80 transition-colors sm:flex [@media(hover:hover)]:hover:bg-mist [@media(hover:hover)]:hover:text-ink"
+                  className="hidden min-h-12 items-center rounded-full px-4 font-medium text-ink transition-colors sm:flex [@media(hover:hover)]:hover:bg-mist [@media(hover:hover)]:hover:text-ink"
                 >
                   Payouts
                 </Link>

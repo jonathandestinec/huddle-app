@@ -6,6 +6,7 @@ import { Button, Card, buttonClass } from "@/components/ui";
 import { endEventAction, publishEventAction } from "@/lib/events/actions";
 import { formatNaira } from "@/lib/money";
 import { playSound } from "@/lib/sound";
+import { DuplicateEventButton } from "./DuplicateEventButton";
 
 export function SharePanel({
   eventId,
@@ -35,6 +36,16 @@ export function SharePanel({
 
   return (
     <div className="space-y-5">
+      {status === "ended" && (
+        <Card className="bg-huddle-yellow/20">
+          <h2 className="font-serif text-3xl">Run it again</h2>
+          <p className="mt-1 text-slate">
+            Make a copy with the same details, cover, links and everything people get. It starts as a draft, so you can set the new date
+            before anyone sees it. Nobody&apos;s RSVPs or numbers come along.
+          </p>
+          <DuplicateEventButton eventId={eventId} label="Duplicate this event" variant="primary" size="lg" className="mt-5" />
+        </Card>
+      )}
       {status === "draft" ? (
         <Card className="text-center">
           <h2 className="font-serif text-3xl">Ready to open it up?</h2>
@@ -62,7 +73,7 @@ export function SharePanel({
           <h2 className="font-serif text-3xl">{status === "ended" ? "This event has ended" : "Your event is live 🎉"}</h2>
           <p className="mt-1 text-slate">Share this link — anyone with it can join.</p>
           <div className="mt-4 flex flex-col gap-2 sm:flex-row">
-            <input readOnly value={publicUrl} onFocus={(e) => e.currentTarget.select()} className="min-h-12 flex-1 rounded-[14px] bg-paper px-4 text-[0.95rem]" aria-label="Event link" />
+            <input readOnly value={publicUrl} onFocus={(e) => e.currentTarget.select()} className="min-h-12 flex-1 rounded-2xl bg-mist px-4 text-[0.95rem] text-ink outline-none focus:ring-4 focus:ring-huddle-yellow/50" aria-label="Event link" />
             <Button onClick={copy}>{copied ? "Copied ✓" : "Copy link"}</Button>
           </div>
           <div className="mt-3 flex flex-wrap gap-2">
@@ -99,7 +110,7 @@ export function SharePanel({
           ["Numbers picked", String(overview.numbersTaken)],
           ["Earned", formatNaira(overview.revenueKobo)],
         ].map(([label, value]) => (
-          <div key={label} className="rounded-3xl border border-ink/[0.06] bg-surface p-4 sm:p-5">
+          <div key={label} className="rounded-3xl border border-ink/[0.12] bg-surface p-4 sm:p-5">
             <p className="text-sm font-medium text-slate">{label}</p>
             <p className="mt-1 font-serif text-3xl tabular-nums">{value}</p>
           </div>

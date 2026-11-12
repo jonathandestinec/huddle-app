@@ -40,7 +40,7 @@ export function Field({ label, hint, error, children }: { label: string; hint?: 
 }
 
 const fieldClass =
-  "w-full rounded-2xl border border-ink/10 bg-surface px-4 outline-none transition-[border-color,box-shadow] duration-200 placeholder:text-slate/60 focus:border-ink/25 focus:ring-4 focus:ring-ink/[0.05]";
+  "w-full rounded-2xl border-[1.5px] border-ink/25 bg-surface px-4 outline-none transition-[border-color,box-shadow] duration-200 placeholder:text-slate/75 [@media(hover:hover)]:hover:border-ink/40 focus:border-ink/75 focus:ring-4 focus:ring-huddle-yellow/50";
 
 export function Input({ className, ...props }: ComponentProps<"input">) {
   return <input {...props} className={cx(fieldClass, "min-h-12 py-2.5", className)} />;
@@ -55,7 +55,7 @@ export function Select({ className, ...props }: ComponentProps<"select">) {
 }
 
 export function Card({ className, ...props }: ComponentProps<"div">) {
-  return <div {...props} className={cx("rounded-[28px] border border-ink/[0.06] bg-surface p-5 sm:p-7", className)} />;
+  return <div {...props} className={cx("rounded-[28px] border border-ink/[0.12] bg-surface p-5 sm:p-7", className)} />;
 }
 
 /** Choose-one control: big, labelled options instead of a cramped segmented switch. */
@@ -84,12 +84,12 @@ export function Choice<T extends string>({
             onClick={() => onChange(o.value)}
             className={cx(
               "flex min-h-12 flex-col items-start rounded-2xl border px-4 py-3 text-left transition-[border-color,background-color,box-shadow] duration-200",
-              on ? "border-ink/60 bg-huddle-yellow/[0.14]" : "border-ink/10 bg-surface [@media(hover:hover)]:hover:border-ink/25",
+              on ? "border-ink/80 bg-huddle-yellow/20" : "border-ink/20 bg-surface [@media(hover:hover)]:hover:border-ink/40",
               o.disabled && "cursor-not-allowed opacity-45",
             )}
           >
             <span className="flex items-center gap-2 font-medium">
-              <span className={cx("h-4 w-4 rounded-full border transition-colors duration-200", on ? "border-ink bg-ink shadow-[inset_0_0_0_3.5px_#fffcea]" : "border-ink/25")} />
+              <span className={cx("h-4 w-4 rounded-full border transition-colors duration-200", on ? "border-ink bg-ink shadow-[inset_0_0_0_3.5px_#fffae2]" : "border-ink/25")} />
               {o.label}
             </span>
             {(o.disabled ? o.disabledHint : o.hint) && <span className="mt-0.5 pl-6 text-sm text-slate">{o.disabled ? o.disabledHint : o.hint}</span>}
@@ -101,7 +101,7 @@ export function Choice<T extends string>({
 }
 
 export function StatusPill({ status }: { status: "draft" | "published" | "ended" }) {
-  const map = { draft: ["Draft", "bg-mist text-ink/75"], published: ["Live", "bg-ink text-white"], ended: ["Ended", "bg-mist text-slate"] } as const;
+  const map = { draft: ["Draft", "bg-mist text-ink"], published: ["Live", "bg-ink text-white"], ended: ["Ended", "bg-mist text-slate"] } as const;
   const [label, cls] = map[status];
   return (
     <span className={cx("inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold", cls)}>

@@ -143,3 +143,49 @@ export async function getPublicEvent(
 
   return { org: r.org, event: r.event, functions: await listEventFunctions(r.event.id) };
 }
+
+const WEEK_MS = 7 * 24 * 60 * 60 * 1000;
+
+/**
+ * Copies an event as a fresh draft: details, cover, links, every function with its settings,
+ * price and access code, and Extra Content items. Nobody's RSVPs, numbers or payments come along.
+ * A date that has passed moves forward by whole weeks, so a weekly service lands on its next week.
+ */
+export async function duplicateEvent(eventId: string, now = new Date()): Promise<{ id: string; slug: string }> {
+  const [src] = await db.select().from(s.events).where(eq(s.events.id, eventId));
+  if (!src) throw new UserError("Event not found");
+  const weeks = src.startsAt <= now ? Math.floor((now.getTime() - src.startsAt.getTime()) / WEEK_MS) + 1 : 0;
+  const shift = (d: Date) => new Date(d.getTime() + weeks * WEEK_MS);
+  const slug = await uniqueSlug(src.organisationId, src.slug);
+
+  return db.transaction(async (tx) => {
+    const [ev] = await tx
+      .insert(s.events)
+      .values({
+        organisationId: src.organisationId,
+        slug,
+        title: src.title,
+        description: src.description,
+        coverKey: src.coverKey,
+        startsAt: shift(src.startsAt),
+        endsAt: src.endsAt ? shift(src.endsAt) : null,
+        venue: src.venue,
+        meetingUrl: src.meetingUrl,
+        status: "draft",
+      })
+      .returning({ id: s.events.id, slug: s.events.slug });
+
+    const fns = await tx.select().from(s.eventFunctions).where(eq(s.eventFunctions.eventId, src.id)).orderBy(asc(s.eventFunctions.position));
+    for (const f of fns) {
+      const [copy] = await tx
+        .insert(s.eventFunctions)
+        .values({ eventId: ev.id, type: f.type, gate: f.gate, priceKobo: f.priceKobo, accessCodeHash: f.accessCodeHash, config: f.config, position: f.position })
+        .returning({ id: s.eventFunctions.id });
+      const items = await tx.select().from(s.contentItems).where(eq(s.contentItems.eventFunctionId, f.id));
+      if (items.length) {
+        await tx.insert(s.contentItems).values(items.map(({ id: _, eventFunctionId: __, ...rest }) => ({ ...rest, eventFunctionId: copy.id })));
+      }
+    }
+    return ev;
+  });
+}

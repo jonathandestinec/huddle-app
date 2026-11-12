@@ -39,7 +39,7 @@ export function HostLive({ functionId, eventId, title, initial }: { functionId: 
   };
 
   const banner = (big: boolean) => (
-    <div className={cx("rounded-[28px] text-center text-ink", big ? "bg-surface p-10" : "border border-ink/[0.06] bg-surface p-8")} aria-live="polite">
+    <div className={cx("rounded-[28px] text-center text-ink", big ? "bg-surface p-10" : "border border-ink/[0.12] bg-surface p-8")} aria-live="polite">
       <p className="text-[0.95rem] font-medium text-ink/60">Now calling</p>
       <p key={state.called ?? "none"} className="animate-[sheet-in_300ms_var(--ease-drawer)] font-serif text-[clamp(5rem,18vw,14rem)] leading-none tabular-nums">
         {state.called ?? "—"}
@@ -116,7 +116,7 @@ export function HostLive({ functionId, eventId, title, initial }: { functionId: 
                 aria-label={`Number ${n}${c ? (c.name ? `, ${c.name}` : ", picked") : ", free"}`}
                 className={cx(
                   "flex min-h-14 flex-col items-center justify-center rounded-xl p-1 font-semibold tabular-nums transition-transform duration-150 active:scale-95",
-                  !c && "bg-surface text-ink/25",
+                  !c && "bg-mist/70 text-ink/45",
                   c?.status === "held" && "bg-mist text-ink/40",
                   c?.status === "confirmed" && !isCalled && (c.calledAt ? "bg-huddle-yellow/45" : "bg-huddle-yellow"),
                   isCalled && "bg-ink/85 text-paper",

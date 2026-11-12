@@ -27,7 +27,7 @@ export function StoreCard({
   const mode = initial.type === "number_picker" ? pickerMode(initial.config) : null;
 
   return (
-    <div className={cx("rounded-[28px] border transition-colors duration-300", added ? "border-ink/60 bg-huddle-yellow/[0.14]" : "border-ink/[0.06] bg-surface")}>
+    <div className={cx("rounded-[28px] border transition-colors duration-300", added ? "border-ink/80 bg-huddle-yellow/20" : "border-ink/[0.12] bg-surface")}>
       <button
         type="button"
         aria-expanded={open}
@@ -47,14 +47,14 @@ export function StoreCard({
           </span>
           <span className="mt-0.5 block text-[0.95rem] text-slate">{description}</span>
         </span>
-        <span className={cx("shrink-0 rounded-full px-4 py-2 text-sm font-semibold", added ? "bg-surface text-ink/85" : "bg-huddle-yellow")}>
+        <span className={cx("shrink-0 rounded-full px-4 py-2 text-sm font-semibold", added ? "bg-surface text-ink" : "bg-huddle-yellow")}>
           {open ? "Close" : added ? "Change" : "Add"}
         </span>
       </button>
       {open && (
         <div className="rounded-b-[27px] border-t border-ink/10 bg-surface px-5 pb-6 pt-5">
           <FunctionEditor eventId={eventId} initial={initial} hasBank={hasBank} onDone={() => !added && setOpen(false)} />
-          {extra && <div className="mt-8 border-t border-ink/[0.06] pt-6">{extra}</div>}
+          {extra && <div className="mt-8 border-t border-ink/[0.12] pt-6">{extra}</div>}
         </div>
       )}
     </div>

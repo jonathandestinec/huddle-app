@@ -13,7 +13,7 @@ export default async function BankPage() {
         When people pay for something at your events, your share goes straight to this account. Huddle keeps 5%.
       </p>
       {org.paystackSubaccountCode ? (
-        <div className="mt-8 rounded-3xl border border-ink/[0.06] bg-surface p-5">
+        <div className="mt-8 rounded-3xl border border-ink/[0.12] bg-surface p-5">
           <p className="font-semibold">You&apos;re all set ✓</p>
           <p className="text-sm text-slate">
             Paying out to {org.bankName} ••••{org.accountLast4}

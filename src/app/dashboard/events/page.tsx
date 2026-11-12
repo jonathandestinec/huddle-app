@@ -47,7 +47,7 @@ export default async function EventsPage() {
       )}
 
       {events.length === 0 ? (
-        <div className="flex flex-col items-center rounded-[28px] border border-ink/[0.06] bg-surface px-6 py-16 text-center">
+        <div className="flex flex-col items-center rounded-[28px] border border-ink/[0.12] bg-surface px-6 py-16 text-center">
           <Penguin mood="wave" size={120} />
           <h2 className="mt-5 font-serif text-3xl">No events yet</h2>
           <p className="mt-2 max-w-sm text-slate">Your first one takes about two minutes. Add a title and a date — you can change anything later.</p>
@@ -75,7 +75,7 @@ function EventList({ title, events }: { title: string; events: Awaited<ReturnTyp
           <li key={e.id}>
             <Link
               href={`/dashboard/events/${e.id}`}
-              className="block h-full rounded-[28px] border border-ink/[0.06] bg-surface p-6 transition-[transform,border-color] duration-300 ease-[var(--ease-out)] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-ink/15 [@media(hover:hover)]:hover:-translate-y-0.5 [@media(hover:hover)]:hover:border-ink/15"
+              className="block h-full rounded-[28px] border border-ink/[0.12] bg-surface p-6 transition-[transform,border-color] duration-300 ease-[var(--ease-out)] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-ink/15 [@media(hover:hover)]:hover:-translate-y-0.5 [@media(hover:hover)]:hover:border-ink/15"
             >
               <div className="flex items-center justify-between gap-3">
                 <StatusPill status={e.status} />

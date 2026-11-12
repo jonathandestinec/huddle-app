@@ -7,9 +7,9 @@
   --color-paper: #ffffff;
   --color-surface: #ffffff;
   /* Warm grey that sits with the paper (the old cool slate clashed). */
-  --color-slate: #77727f;
+  --color-slate: #5f5a68;
   /* One tone step below paper, for tracks, selected rows and quiet fields. */
-  --color-mist: #f4f3ef;
+  --color-mist: #efede7;
   /* A slightly deeper yellow for edges and hover on yellow things. */
   --color-huddle-yellow-deep: #f2d43f;
   --color-huddle-purple: #8d7dff;

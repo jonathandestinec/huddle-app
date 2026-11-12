@@ -150,7 +150,7 @@ export function NumberPickerCard({
               value={code}
               onChange={(e) => setCode(e.target.value)}
               placeholder="Ask the host for the code"
-              className="min-h-12 w-full rounded-2xl border border-ink/10 bg-surface px-4 outline-none transition-[border-color,box-shadow] duration-200 focus:border-ink/25 focus:ring-4 focus:ring-ink/[0.05]"
+              className="min-h-12 w-full rounded-2xl border-[1.5px] border-ink/25 bg-surface px-4 outline-none transition-[border-color,box-shadow] duration-200 focus:border-ink/75 focus:ring-4 focus:ring-huddle-yellow/50"
             />
           </label>
         )}

@@ -42,7 +42,7 @@ export function BankForm({ organisationId, banks }: { organisationId: string; ba
         <Select
           value={bankCode}
           onChange={(e) => setBankCode(e.target.value)}
-          className="w-full rounded-2xl border border-ink/10 bg-surface px-4 py-3 outline-none transition-[border-color,box-shadow] duration-200 focus:border-ink/25 focus:ring-4 focus:ring-ink/[0.05]"
+          className="w-full rounded-2xl border-[1.5px] border-ink/25 bg-surface px-4 py-3 outline-none transition-[border-color,box-shadow] duration-200 focus:border-ink/75 focus:ring-4 focus:ring-huddle-yellow/50"
         >
           <option value="">Choose your bank</option>
           {banks.map((b) => (
