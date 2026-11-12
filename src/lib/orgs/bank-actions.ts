@@ -3,6 +3,7 @@ import { requireOrgOwner } from "@/lib/auth/session";
 import { UserError, toActionResult } from "@/lib/errors";
 import { PaystackError, resolveAccount } from "@/lib/paystack/client";
 import { linkBankAccount } from "./bank";
+import { friendlyBankError } from "./bank-errors";
 
 export async function resolveAccountAction(organisationId: string, accountNumber: string, bankCode: string) {
   return toActionResult(async () => {
@@ -10,7 +11,7 @@ export async function resolveAccountAction(organisationId: string, accountNumber
     try {
       return await resolveAccount(accountNumber, bankCode);
     } catch (err) {
-      if (err instanceof PaystackError) throw new UserError("We couldn't find that account. Check the number and bank.");
+      if (err instanceof PaystackError) throw new UserError(friendlyBankError(err));
       throw err;
     }
   });
@@ -25,7 +26,9 @@ export async function linkBankAction(
     try {
       await linkBankAccount(organisationId, input);
     } catch (err) {
-      if (err instanceof PaystackError) throw new UserError(`Paystack said: ${err.message}`);
+      if (err instanceof PaystackError) {
+        throw new UserError(err.status === 400 ? `Paystack said: ${err.message}` : friendlyBankError(err));
+      }
       throw err;
     }
   });
