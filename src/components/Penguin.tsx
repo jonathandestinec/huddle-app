@@ -18,7 +18,7 @@ export function Penguin({ size = 96, mood = "happy", className }: { size?: numbe
           <circle cx="70.2" cy="47.8" r="1.1" fill="#fff" />
         </>
       )}
-      <path d="M54 57l6 7 6-7c-3-2-9-2-12 0Z" fill="#FFE76C" stroke="#1A1A1A" strokeWidth="2" strokeLinejoin="round" />
+      <path d="M54 57l6 7 6-7c-3-2-9-2-12 0Z" fill="#FEF16C" stroke="#1A1A1A" strokeWidth="2" strokeLinejoin="round" />
       <ellipse cx="44" cy="62" rx="4" ry="2.5" fill="#FFB4A2" opacity="0.6" />
       <ellipse cx="76" cy="62" rx="4" ry="2.5" fill="#FFB4A2" opacity="0.6" />
       {mood === "wave" ? (
@@ -27,7 +27,7 @@ export function Penguin({ size = 96, mood = "happy", className }: { size?: numbe
         <path d="M93 64c5 8 6 18 3 24" stroke="#1A1A1A" strokeWidth="8" strokeLinecap="round" />
       )}
       <path d="M27 64c-5 8-6 18-3 24" stroke="#1A1A1A" strokeWidth="8" strokeLinecap="round" />
-      <path d="M46 106l-8 6h16M74 106l8 6H66" stroke="#FFE76C" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M46 106l-8 6h16M74 106l8 6H66" stroke="#FEF16C" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
 }

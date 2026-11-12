@@ -1,21 +1,18 @@
-import { Inter } from "next/font/google";
 import Image from "next/image";
 import Link from "next/link";
 import { MobileMenu } from "@/components/marketing/MobileMenu";
 import { Ribbon } from "@/components/marketing/Ribbon";
 
-/** The date picker in "How It Works" is set in Inter in the design. */
-const inter = Inter({ subsets: ["latin"], weight: ["400", "500"] });
 
 /*
  * Landing page, built to the Figma frame (design/Desktop.png, 1280px content width).
- * The design's own colours apply here: ink #1A1A1A and yellow #FEF16C (set on the wrapper below).
+ * Colours come from the shared brand tokens (ink #1A1A1A, yellow #FEF16C), which match the Figma.
  */
 
 const pill =
   "inline-flex select-none items-center justify-center rounded-full font-medium transition-[transform,background-color,color,box-shadow] duration-200 ease-[var(--ease-out)] active:scale-[0.97] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-ink/25";
 /** Yellow pill: deepens on hover. */
-const pillYellow = `${pill} bg-huddle-yellow [@media(hover:hover)]:hover:bg-[#F7E544]`;
+const pillYellow = `${pill} bg-huddle-yellow [@media(hover:hover)]:hover:bg-huddle-yellow-deep`;
 /** Outlined pill: fills with ink on hover. */
 const pillOutline = `${pill} border border-ink [@media(hover:hover)]:hover:bg-ink [@media(hover:hover)]:hover:text-white`;
 /** Text link with an underline that draws in on hover and focus. */
@@ -78,10 +75,10 @@ function Hero() {
           <br />
           Connect, <em>monetize</em> your <span className="text-[#656565]">communities.</span>
         </h1>
-        <p className="mx-auto mt-6 max-w-[560px] text-pretty text-[17px] leading-[24px] xl:mt-[36px] xl:text-[20px]">
+        <p className="mx-auto mt-6 max-w-[560px] text-pretty text-[17px] leading-[1.42] xl:mt-[36px] xl:text-[20px]">
           The platform that lets organisations run events, gate exclusive content, and earn from their community. All in one place.
         </p>
-        <div className="mt-8 flex flex-col items-center gap-[19px] xl:mt-[50px]">
+        <div className="mt-8 flex flex-col items-center gap-[19px] xl:mt-[41px]">
           <Link href="/login" className={`${pillYellow} h-[48px] w-[209px] text-[20px]`}>
             Get started
           </Link>
@@ -117,21 +114,21 @@ const LOGOS = [
 function WhatIs() {
   return (
     <section className="mx-auto mt-10 max-w-[1280px] px-3 sm:px-4 xl:mt-0 xl:px-0">
-      <div className="relative z-10 overflow-hidden rounded-[56px] bg-[#8D7DFF] px-6 pb-12 pt-14 text-white xl:h-[828px] xl:rounded-[120px] xl:px-[133px] xl:pb-0 xl:pt-[160px]">
+      <div className="relative z-10 overflow-hidden rounded-[56px] bg-huddle-purple px-6 pb-12 pt-14 text-white xl:h-[828px] xl:rounded-[120px] xl:px-[133px] xl:pb-0 xl:pt-[160px]">
         <div className="xl:max-w-[575px]">
           <h2 className={serifH2}>
             What is
             <br />
             Huddle?
           </h2>
-          <p className="mt-8 text-[17px] leading-[24px] xl:mt-[26px] xl:text-[19px]">
+          <p className="mt-8 text-[17px] leading-[1.42] xl:mt-[26px] xl:text-[19px]">
             Huddle is a platform designed for churches, schools, and organizations to seamlessly monetize their live events.
             <br />
             Through modular capabilities called Functions, you can customize your meetings to fit your exact needs. Easily activate Content
             Protection to lock video recordings and digital resources behind a secure paywall, or use our anonymous Number Picker to
             randomly reward attendees and grant them special privileges during your call.
           </p>
-          <p className="mt-6 text-[17px] leading-[24px] xl:mt-[26px] xl:text-[19px]">
+          <p className="mt-6 text-[17px] leading-[1.42] xl:mt-[26px] xl:text-[19px]">
             Huddle is packed with dozens of intuitive tools built to give you complete control over your meetings.
           </p>
           <a href="#features" className="group mt-10 inline-flex items-center gap-[54px] rounded-[8px] text-[17px] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white/40 xl:mt-[58px] xl:text-[19px]">
@@ -145,7 +142,7 @@ function WhatIs() {
         {/* Phone with locked material, the yellow blob and the leaf. */}
         <div className="relative mx-auto mt-12 h-[650px] w-[315px] xl:absolute xl:left-[830px] xl:top-[89px] xl:mt-0">
           <Image src="/landing/blob-yellow.png" alt="" width={124} height={129} className="absolute -left-[138px] -top-[50px] w-[120px] max-xl:-left-6 max-xl:-top-10 max-xl:w-20" />
-          <div className="absolute inset-[13px] overflow-hidden rounded-[46px] bg-[radial-gradient(28%_18%_at_80%_22%,rgba(214,140,70,0.55),transparent),radial-gradient(30%_22%_at_18%_40%,rgba(160,96,50,0.5),transparent),radial-gradient(120%_70%_at_30%_15%,#6b3d1c_0%,#3d2210_45%,#1d1007_100%)]">
+          <div className="absolute inset-[13px] overflow-hidden rounded-[46px] bg-[radial-gradient(28%_18%_at_80%_22%,rgba(184,112,52,0.4),transparent),radial-gradient(30%_22%_at_18%_40%,rgba(130,74,36,0.38),transparent),radial-gradient(120%_70%_at_30%_15%,#6b3d1c_0%,#3d2210_45%,#1d1007_100%)]">
             <p className="mx-auto mt-[84px] w-[160px] text-center text-[24px] leading-[29px]">Weekly Study Guide.pdf</p>
             <div className="relative mx-auto mt-[54px] w-[110px]">
               <Image src="/landing/icon-lock-white.png" alt="" width={110} height={140} className="w-[110px]" />
@@ -153,7 +150,7 @@ function WhatIs() {
                 <path d="M13 1c6.5 0 11 4.6 11 10.2 0 4-2.2 7.3-5.3 9l3.8 15.4c.4 1.8-.9 3.4-2.7 3.4H6.2c-1.8 0-3.1-1.6-2.7-3.4L7.3 20.2C4.2 18.5 2 15.2 2 11.2 2 5.6 6.5 1 13 1Z" fill="#fff" />
               </svg>
             </div>
-            <p className="mx-auto mt-[38px] w-[230px] text-center text-[20px] leading-[24px]">This material is currently locked</p>
+            <p className="mx-auto mt-[38px] w-[230px] text-center text-[20px] leading-[1.42]">This material is currently locked</p>
             <span className="mx-auto mt-[32px] flex h-[34px] w-[166px] items-center justify-center rounded-full bg-huddle-yellow text-[15px] text-ink">
               Purchase Access
             </span>
@@ -182,17 +179,16 @@ function WhatIs() {
 
 function Quote() {
   const chip = "mx-[24px] inline-block h-[56px] w-[46px] -translate-y-[6px] rounded-[12px] object-cover align-middle sm:h-[82px] sm:w-[67px] sm:rounded-[14px]";
-  // The grey words fade a little lighter across the line, as in the design.
-  const fade = "bg-gradient-to-r from-[#3a3a3a] to-[#8c8c8c] bg-clip-text text-transparent";
+  // The grey words step lighter across the quote, as in the design (solid colours, no gradient text).
   return (
     <section className="mx-auto max-w-[900px] px-5 py-[160px] text-center xl:pb-[423px] xl:pt-[451px]">
       <p className="font-serif text-[40px] leading-[1.35] sm:text-[72px] sm:leading-[103px]">
         &ldquo;Have all of
         <Image src="/landing/quote-1.png" alt="" width={82} height={97} className={chip} />
-        the tools <span className={fade}>you</span>
+        the tools <span className="text-[#4a4a4a]">you</span>
         <br className="hidden sm:inline" /> need
         <Image src="/landing/quote-2.png" alt="" width={67} height={82} className={chip} />
-        to better <span className={fade}>control your</span>
+        to better <span className="text-[#555555]">control</span> <span className="text-[#757575]">your</span>
         <br className="hidden sm:inline" /> meetings, in
         <Image src="/landing/quote-3.png" alt="" width={67} height={82} className={chip} />
         <span className="text-[#7d7d7d]">one place&rdquo;</span>
@@ -211,7 +207,7 @@ function Features() {
         <p className="mt-6 text-[28px] leading-tight xl:mt-[36px] xl:text-[38px]">
           Special functions <span className="text-huddle-yellow">for your meetings</span>
         </p>
-        <p className="mt-8 max-w-[600px] text-[17px] leading-[24px] xl:mt-[46px] xl:text-[19px]">
+        <p className="mt-8 max-w-[600px] text-[17px] leading-[1.42] xl:mt-[46px] xl:text-[19px]">
           Functions are designed to provide complete control and unmatched flexibility, helping you run secure, engaging, and profitable
           virtual stages.
         </p>
@@ -241,7 +237,7 @@ function RowText({ title, children }: { title: React.ReactNode; children: React.
   return (
     <div className="max-w-[380px]">
       <h3 className="text-balance font-serif text-[46px] leading-[1] sm:text-[64px] sm:leading-[70px]">{title}</h3>
-      <p className="mt-6 max-w-[372px] text-[17px] leading-[24px] xl:mt-[46px] xl:text-[20px]">{children}</p>
+      <p className="mt-6 max-w-[372px] text-[17px] leading-[1.42] xl:mt-[46px] xl:text-[20px]">{children}</p>
       <LearnMore />
     </div>
   );
@@ -259,7 +255,7 @@ function LockCard() {
         <Image src="/landing/avatar.png" alt="" width={109} height={109} className="mx-auto mt-[22px] w-[109px] rounded-full" />
         <p className="mt-[42px] text-[22px] font-medium">Lecture_Transcript.pdf</p>
         <Image src="/landing/lock.svg" alt="" width={87} height={111} className="mx-auto mt-[26px] w-[87px]" />
-        <p className="mx-auto mt-[38px] w-[260px] text-[19px] leading-[24px]">This content can be unlocked by purchasing access</p>
+        <p className="mx-auto mt-[38px] w-[260px] text-[19px] leading-[1.42]">This content can be unlocked by purchasing access</p>
       </div>
     </div>
   );
@@ -334,7 +330,7 @@ function ChatCard() {
 }
 
 function CertificateCard() {
-  const tiny = "text-[7px] leading-[9px] text-[#4a4a4a]";
+  const tiny = "text-[11px] leading-[14px] text-[#4a4a4a]";
   return (
     <div className={`${tile} h-[617px]`}>
       <div className={`${frame} absolute inset-x-[54px] top-[119px] h-[378px] px-[52px] max-sm:inset-x-4 max-sm:px-6`}>
@@ -348,12 +344,12 @@ function CertificateCard() {
         <div className="mt-[30px] flex items-end justify-between gap-6">
           <div className="w-[213px]">
             <p className={tiny}>awarded to</p>
-            <p className="border-b border-[#CFCFCF] pb-[3px] text-[11px] font-semibold">Ryan Gislong</p>
+            <p className="border-b border-[#CFCFCF] pb-[3px] text-[12px] font-semibold">Ryan Gislong</p>
             <p className={`${tiny} mt-[3px]`}>for successfully completing</p>
-            <p className="border-b border-[#CFCFCF] pb-[3px] text-[11px] font-semibold">KLISOM Academy</p>
+            <p className="border-b border-[#CFCFCF] pb-[3px] text-[12px] font-semibold">KLISOM Academy</p>
           </div>
           <div className="text-right">
-            <p className="text-[11px] font-semibold">08.08.2023</p>
+            <p className="text-[12px] font-semibold">08.08.2023</p>
             <p className={tiny}>John Doe</p>
             <svg width="64" height="34" viewBox="0 0 64 34" fill="none" className="ml-auto" aria-hidden="true">
               <path
@@ -368,7 +364,7 @@ function CertificateCard() {
         </div>
         <div className="absolute inset-x-[52px] bottom-[42px] flex justify-between max-sm:inset-x-6">
           <p className={tiny}>certificate number</p>
-          <p className="font-mono text-[7px] font-semibold">JTT 108</p>
+          <p className="text-[11px] font-semibold tabular-nums">JTT 108</p>
         </div>
       </div>
     </div>
@@ -450,7 +446,7 @@ function StickyNote({
       )}
       <Image src={`/landing/notes/${art.src}.svg`} alt="" width={art.w} height={art.h} className={`mx-auto h-auto ${art.className}`} />
       <p className="mt-[14px] text-[38px] font-bold leading-none">{title}</p>
-      <p className="mx-auto mt-[16px] max-w-[268px] text-[19px] leading-[24px]">{body}</p>
+      <p className="mx-auto mt-[16px] max-w-[268px] text-[19px] leading-[1.42]">{body}</p>
     </div>
   );
 }
@@ -460,13 +456,13 @@ function Benefits() {
     <section
       id="benefits"
       className="relative mx-auto max-w-[1280px] scroll-mt-28 overflow-hidden bg-[#ED6A5B] px-4 py-16 xl:h-[1163px] xl:px-0 xl:py-0"
-      style={{
-        backgroundImage: "repeating-linear-gradient(to bottom, transparent 0 72px, rgba(255,255,255,0.72) 72px 74px)",
-        backgroundSize: "980px 966px",
-        backgroundPosition: "center 61px",
-        backgroundRepeat: "no-repeat",
-      }}
     >
+      {/* Ruled lines of the pinboard: 13 lines, 74px apart, starting 133px down. */}
+      <div className="pointer-events-none absolute inset-x-0 top-[133px] mx-auto w-full max-w-[980px] px-4 xl:px-0" aria-hidden="true">
+        {Array.from({ length: 13 }, (_, i) => (
+          <span key={i} className="block h-[2px] bg-white/70" style={{ marginTop: i === 0 ? 0 : 72 }} />
+        ))}
+      </div>
       <div className="pointer-events-none absolute left-[1165px] -top-[38px] hidden xl:block" aria-hidden="true">
         <Image src="/landing/pin-yellow.svg" alt="" width={142} height={135} className="w-[100px] rotate-[8deg]" />
       </div>
@@ -548,7 +544,7 @@ function Step({ n, title, body, bodyWidth = 840, children }: { n: string; title:
     <div className="flex flex-col items-center text-center">
       <span className="flex h-[98px] w-[98px] items-center justify-center rounded-full border-2 border-ink bg-huddle-yellow text-[54px] font-light leading-none tracking-[-0.02em]">{n}</span>
       <h3 className="mt-[56px] text-[32px] font-medium leading-[1.1] xl:text-[48px]">{title}</h3>
-      <p className="mt-[26px] text-[22px] leading-[1.25] xl:text-[36px]" style={{ maxWidth: bodyWidth }}>
+      <p className="mt-[26px] text-[22px] leading-[1.35] xl:text-[36px]" style={{ maxWidth: bodyWidth }}>
         {body}
       </p>
       {children && <div className="mt-[140px] w-full">{children}</div>}
@@ -573,15 +569,15 @@ function HowItWorks() {
             <div className={field}>Organization email</div>
           </div>
           <div className="mx-auto mt-[26px] max-w-[550px] text-left">
-            <Link href="/login" className="inline-flex h-[56px] w-[170px] items-center justify-center rounded-[12px] bg-huddle-yellow text-[22px] font-medium shadow-[0_2px_6px_rgba(26,26,26,0.12)] transition-[transform,background-color] duration-200 ease-[var(--ease-out)] active:scale-[0.97] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-ink/25 [@media(hover:hover)]:hover:bg-[#F7E544]">
+            <Link href="/login" className="inline-flex h-[56px] w-[170px] items-center justify-center rounded-[12px] bg-huddle-yellow text-[22px] font-medium shadow-[0_2px_6px_rgba(26,26,26,0.12)] transition-[transform,background-color] duration-200 ease-[var(--ease-out)] active:scale-[0.97] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-ink/25 [@media(hover:hover)]:hover:bg-huddle-yellow-deep">
               Create Org.
             </Link>
           </div>
         </Step>
       </div>
-      <StepLine after={105} />
+      <StepLine after={101} />
       <Step n="02" title="Build your event" body="Add the details. Pick a date. You're live.">
-        <div className={`mx-auto w-fit ${inter.className}`} aria-hidden="true">
+        <div className="mx-auto w-fit font-medium tabular-nums" aria-hidden="true">
           <div className="flex justify-center gap-3 sm:gap-[37px]">
             <span className="flex h-[56px] w-[190px] items-center justify-between rounded-[10px] border border-[#E2E2E2] px-4 text-[22px] sm:h-[76px] sm:w-[270px] sm:px-[26px] sm:text-[32px] shadow-[0_1px_3px_rgba(0,0,0,0.08)]">
               Select date
@@ -608,7 +604,7 @@ function HowItWorks() {
           </div>
         </div>
       </Step>
-      <StepLine after={92} />
+      <StepLine after={88} />
       <Step n="03" title="Attach what you need" bodyWidth={600} body="Content Protection. Number Picker. Forum Access. Certificates. Only what fits.">
         <div className="mx-auto max-w-[450px] space-y-[23px] text-left" aria-hidden="true">
           {[
@@ -636,11 +632,11 @@ function HowItWorks() {
           ))}
         </div>
       </Step>
-      <StepLine after={183} />
+      <StepLine after={173} />
       <Step n="04" title="Bring your people in" body="They register, reserve, engage — all in one place.">
         <Image src="/landing/monitor.svg" alt="" width={318} height={322} className="mx-auto w-[260px] xl:w-[318px]" />
       </Step>
-      <StepLine after={103} />
+      <StepLine after={98} />
       <Step n="05" title="Earn from what you built" body="Gate it, price it, get paid. You keep the majority.">
         <Image src="/landing/coins.svg" alt="" width={427} height={278} className="mx-auto w-[320px] xl:w-[411px]" />
       </Step>
@@ -653,7 +649,7 @@ function Pricing() {
     <section id="pricing" className="mx-auto max-w-[1280px] scroll-mt-28 px-5 pb-[140px] pt-[200px]">
       <div className="mx-auto max-w-[640px] rounded-[56px] bg-huddle-yellow px-8 py-14 text-center">
         <h2 className="font-serif text-[52px] leading-none xl:text-[64px]">Free to start.</h2>
-        <p className="mx-auto mt-6 max-w-[440px] text-[19px] leading-[24px]">
+        <p className="mx-auto mt-6 max-w-[440px] text-[19px] leading-[1.42]">
           No monthly fee. When you earn, Huddle keeps 5% and your share lands in your bank account. Pro and Scale plans with lower fees are
           coming soon.
         </p>
@@ -682,7 +678,6 @@ export default function Home() {
   return (
     <div
       className="flex-1 bg-white text-ink selection:bg-huddle-yellow selection:text-ink [&_img]:select-none"
-      style={{ ["--color-ink" as string]: "#1A1A1A", ["--color-huddle-yellow" as string]: "#FEF16C" }}
     >
       <Nav />
       <main>

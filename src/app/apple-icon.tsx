@@ -12,7 +12,7 @@ export default async function AppleIcon() {
   return new ImageResponse(
     (
       // Solid yellow behind the tile: iOS rounds the corners itself and turns transparency black.
-      <div style={{ display: "flex", width: "100%", height: "100%", background: "#FFE76C" }}>
+      <div style={{ display: "flex", width: "100%", height: "100%", background: "#FEF16C" }}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src={src} width={180} height={180} alt="" />
       </div>

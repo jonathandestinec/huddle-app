@@ -1,7 +1,7 @@
 import { Body, Container, Head, Html, Preview, Section, Text } from "@react-email/components";
 import type { ReactNode } from "react";
 
-export const colors = { yellow: "#FFE76C", ink: "#1A1A1A", paper: "#FAFAF8", slate: "#64748B" };
+export const colors = { yellow: "#FEF16C", ink: "#1A1A1A", paper: "#FAFAF8", slate: "#64748B" };
 
 export function EmailLayout({ preview, children }: { preview: string; children: ReactNode }) {
   return (
