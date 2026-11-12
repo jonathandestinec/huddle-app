@@ -1,5 +1,7 @@
 import { getFunctionDefinition } from "@/functions/registry";
 import { IdentityProvider } from "@/functions/IdentifySheet";
+import { ExtraContentCard } from "@/functions/extra-content/AttendeeCard";
+import { listContent } from "@/functions/extra-content/logic";
 import { NumberPickerCard } from "@/functions/number-picker/AttendeeCard";
 import { getPickerState } from "@/functions/number-picker/logic";
 import { RsvpCard } from "@/functions/rsvp/AttendeeCard";
@@ -36,6 +38,8 @@ async function renderCard(f: EventFunction, event: Event, viewer: SessionUser | 
           ended={ended}
         />
       );
+    case "extra_content":
+      return <ExtraContentCard key={f.id} fn={shell} unlocked={unlocked} items={await listContent(f.id, viewer?.id ?? null)} />;
     default:
       return null;
   }

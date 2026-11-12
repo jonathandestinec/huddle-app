@@ -1,4 +1,6 @@
 import { notFound } from "next/navigation";
+import { ContentManager } from "@/functions/extra-content/ContentManager";
+import { listContentForOwner } from "@/functions/extra-content/logic";
 import { requireOrgOwner } from "@/lib/auth/session";
 import { getEventById, listEventFunctions } from "@/lib/events/service";
 import { utcToLagosLocal } from "@/lib/events/time";
@@ -14,6 +16,12 @@ export default async function EventEditorPage({ params }: PageProps<"/dashboard/
   await requireOrgOwner(ev.organisationId);
   const functions = await listEventFunctions(ev.id);
   const publicUrl = `${getEnv().APP_URL}/${ev.org.slug}/${ev.slug}`;
+  const contentFn = functions.find((f) => f.type === "extra_content");
+  const extras: Record<string, React.ReactNode> = {};
+  if (contentFn) {
+    const items = await listContentForOwner(contentFn.id);
+    extras[contentFn.id] = <ContentManager functionId={contentFn.id} items={items.map(({ id, title, kind }) => ({ id, title, kind }))} />;
+  }
 
   return (
     <div className="space-y-10">
@@ -34,7 +42,7 @@ export default async function EventEditorPage({ params }: PageProps<"/dashboard/
             }}
           />
         </section>
-        <FunctionsPanel event={ev} functions={functions} hasBank={!!ev.org.paystackSubaccountCode} />
+        <FunctionsPanel event={ev} functions={functions} hasBank={!!ev.org.paystackSubaccountCode} extras={extras} />
       </div>
     </div>
   );
