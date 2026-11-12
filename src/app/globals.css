@@ -6,18 +6,37 @@
   --color-paper: #fafaf8;
   --color-surface: #ffffff;
   --color-slate: #64748b;
+  --color-huddle-purple: #8d7dff;
+  --color-huddle-coral: #ed6a5b;
+  --color-huddle-lilac: #ebd2f9;
+  --color-huddle-sky: #bee1e3;
   --font-sans: var(--font-urbanist), ui-sans-serif, system-ui, sans-serif;
   --font-serif: var(--font-instrument-serif), ui-serif, Georgia, serif;
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
 }
 
 html {
   color-scheme: light;
+  -webkit-tap-highlight-color: transparent;
 }
 
 body {
   background: var(--color-paper);
   color: var(--color-ink);
   font-family: var(--font-sans);
+}
+
+/* Inputs under 16px make iOS zoom the page. */
+input,
+select,
+textarea {
+  font-size: max(16px, 1em);
+}
+
+button {
+  touch-action: manipulation;
 }
 
 @keyframes sheet-in {
@@ -31,11 +50,51 @@ body {
   }
 }
 
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+/* Scroll reveal (marketing only). */
+.reveal {
+  opacity: 0;
+  transform: translateY(16px);
+  transition:
+    opacity 600ms var(--ease-out),
+    transform 600ms var(--ease-out);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+.reveal[data-in="true"] {
+  opacity: 1;
+  transform: none;
+}
+
+/* Hover lift only where hover is real (not on touch). */
+@media (hover: hover) and (pointer: fine) {
+  .hover-lift {
+    transition: transform 200ms var(--ease-out);
+  }
+  .hover-lift:hover {
+    transform: translateY(-2px);
+  }
+}
+
+/* Reduced motion: keep fades that aid comprehension, drop movement. */
 @media (prefers-reduced-motion: reduce) {
+  .reveal {
+    transform: none;
+    transition: opacity 300ms ease;
+  }
+  [class*="animate-[sheet-in"] {
+    animation-name: fade-in !important;
+  }
+  .animate-pulse {
+    animation: none;
+  }
   *,
   *::before,
   *::after {
-    animation-duration: 0.01ms !important;
-    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }
