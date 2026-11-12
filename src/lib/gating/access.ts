@@ -40,6 +40,9 @@ export async function grantEntitlement(
   tx: Tx,
   input: { userId: string; functionId: string; source: EntitlementSource; payment?: Payment },
 ): Promise<{ created: boolean }> {
+  // Serialise grants per function (hooks like RSVP capacity rely on it). NO KEY UPDATE avoids FK deadlocks.
+  const [f] = await tx.select().from(s.eventFunctions).where(eq(s.eventFunctions.id, input.functionId)).for("no key update");
+  if (!f) throw new UserError("Function not found");
   const inserted = await tx
     .insert(s.entitlements)
     .values({
@@ -52,11 +55,11 @@ export async function grantEntitlement(
     .returning({ id: s.entitlements.id });
   if (inserted.length === 0) return { created: false };
 
-  const f = await loadFn(input.functionId, tx);
   await getFunctionDefinition(f.type).onEntitled?.({
     tx,
     userId: input.userId,
     functionId: input.functionId,
+    source: input.source,
     payment: input.payment,
   });
   return { created: true };

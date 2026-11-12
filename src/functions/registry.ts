@@ -15,6 +15,8 @@ const definitions: Record<FunctionType, FunctionDefinition<any>> = {
     emoji: "🪑",
     configSchema: rsvpConfigSchema,
     defaultConfig: { capacity: null },
+    // Lazy import keeps the registry free of import cycles (logic → gating → registry).
+    onEntitled: (ctx) => import("./rsvp/logic").then((m) => m.rsvpOnEntitled(ctx)),
   },
   number_picker: {
     type: "number_picker",
@@ -38,11 +40,6 @@ export const ALL_FUNCTION_TYPES = Object.keys(definitions) as FunctionType[];
 
 export function getFunctionDefinition(type: FunctionType): FunctionDefinition<any> {
   return definitions[type];
-}
-
-/** Lets later tasks register server hooks without circular imports. */
-export function registerOnEntitled(type: FunctionType, hook: NonNullable<FunctionDefinition["onEntitled"]>) {
-  definitions[type].onEntitled = hook;
 }
 
 /** Shown in the store as "Coming soon". */

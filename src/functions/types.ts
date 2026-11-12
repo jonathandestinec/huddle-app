@@ -12,6 +12,7 @@ export type EntitledContext = {
   tx: Tx;
   userId: string;
   functionId: string;
+  source: EntitlementSource;
   payment?: Payment;
 };
 
