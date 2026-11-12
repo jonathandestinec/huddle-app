@@ -1,6 +1,7 @@
 import { and, eq, inArray, lt, or, sql } from "drizzle-orm";
 import { db } from "@/lib/db/client";
 import * as s from "@/lib/db/schema";
+import { sendAccessEmail } from "@/lib/email/access";
 import { isUniqueViolation, uniqueConstraintName } from "@/lib/errors";
 import { getFunctionWithEvent } from "@/lib/functions/service";
 import { grantEntitlement, hasEntitlement } from "@/lib/gating/access";
@@ -67,6 +68,7 @@ export async function claimNumber(userId: string, functionId: string, n: number)
   try {
     if (entitled) {
       await db.insert(s.numberClaims).values({ eventFunctionId: functionId, number: n, userId, status: "confirmed" });
+      sendAccessEmail(userId, functionId, "registered");
       return { ok: true, status: "confirmed" };
     }
     if (gate === "code") return { ok: false, error: "Unlock this first" };
@@ -75,6 +77,7 @@ export async function claimNumber(userId: string, functionId: string, n: number)
         await grantEntitlement(tx, { userId, functionId, source: "free" });
         await tx.insert(s.numberClaims).values({ eventFunctionId: functionId, number: n, userId, status: "confirmed" });
       });
+      sendAccessEmail(userId, functionId, "registered");
       return { ok: true, status: "confirmed" };
     }
     // paid

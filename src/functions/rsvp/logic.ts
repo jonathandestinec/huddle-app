@@ -1,6 +1,7 @@
 import { and, count, eq } from "drizzle-orm";
 import { db, type Tx } from "@/lib/db/client";
 import * as s from "@/lib/db/schema";
+import { sendAccessEmail } from "@/lib/email/access";
 import { getFunctionWithEvent } from "@/lib/functions/service";
 import { grantEntitlement, hasEntitlement } from "@/lib/gating/access";
 import { notifyOwners } from "@/lib/orgs/notify";
@@ -57,10 +58,11 @@ export async function reserveSeat(userId: string, functionId: string): Promise<R
     const r = await db.transaction(async (tx) => {
       if (!entitled) {
         const { created } = await grantEntitlement(tx, { userId, functionId, source: "free" });
-        if (created) return "reserved"; // onEntitled reserved the seat (or threw FullError)
+        if (created) return "granted" as const; // onEntitled reserved the seat (or threw FullError)
       }
       return seatInTx(tx, userId, functionId);
     });
+    if (r === "granted") sendAccessEmail(userId, functionId, "registered");
     return r === "full" ? { ok: false, error: "This one's full" } : { ok: true };
   } catch (err) {
     if (err instanceof FullError) return { ok: false, error: "This one's full" };

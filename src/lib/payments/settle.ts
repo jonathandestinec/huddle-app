@@ -1,6 +1,7 @@
 import { eq } from "drizzle-orm";
 import { db } from "@/lib/db/client";
 import * as s from "@/lib/db/schema";
+import { sendAccessEmail } from "@/lib/email/access";
 import { grantEntitlement } from "@/lib/gating/access";
 import { verifyTransaction } from "@/lib/paystack/client";
 
@@ -31,7 +32,7 @@ export async function settlePayment(reference: string, source: "webhook" | "veri
     return "not_successful";
   }
 
-  return db.transaction(async (tx) => {
+  const result = await db.transaction(async (tx) => {
     const [p] = await tx.select().from(s.payments).where(eq(s.payments.id, existing.id)).for("update");
     if (p.status === "success") return "already_settled" as const;
     const [updated] = await tx
@@ -47,4 +48,6 @@ export async function settlePayment(reference: string, source: "webhook" | "veri
     });
     return "settled" as const;
   });
+  if (result === "settled") sendAccessEmail(existing.userId, existing.eventFunctionId, "receipt", existing.amountKobo);
+  return result;
 }

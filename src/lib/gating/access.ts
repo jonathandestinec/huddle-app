@@ -2,6 +2,7 @@ import bcrypt from "bcryptjs";
 import { and, count, eq, gt } from "drizzle-orm";
 import { db, type Executor, type Tx } from "@/lib/db/client";
 import * as s from "@/lib/db/schema";
+import { sendAccessEmail } from "@/lib/email/access";
 import { UserError } from "@/lib/errors";
 import { getFunctionDefinition } from "@/functions/registry";
 import type { EntitlementSource, Gate, Payment } from "@/functions/types";
@@ -68,7 +69,9 @@ export async function grantEntitlement(
 export async function unlockFree(userId: string, functionId: string): Promise<{ created: boolean }> {
   const f = await loadFn(functionId);
   if (f.gate !== "free") throw new UserError("This one isn't free");
-  return db.transaction((tx) => grantEntitlement(tx, { userId, functionId, source: "free" }));
+  const r = await db.transaction((tx) => grantEntitlement(tx, { userId, functionId, source: "free" }));
+  if (r.created) sendAccessEmail(userId, functionId, "registered");
+  return r;
 }
 
 export async function unlockWithCode(
@@ -91,6 +94,7 @@ export async function unlockWithCode(
     await db.insert(s.codeAttempts).values({ eventFunctionId: functionId, ipHash });
     return { ok: false, error: "That code didn't work" };
   }
-  await db.transaction((tx) => grantEntitlement(tx, { userId, functionId, source: "code" }));
+  const r = await db.transaction((tx) => grantEntitlement(tx, { userId, functionId, source: "code" }));
+  if (r.created) sendAccessEmail(userId, functionId, "registered");
   return { ok: true };
 }
