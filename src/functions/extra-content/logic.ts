@@ -3,6 +3,7 @@ import { z } from "zod";
 import { db } from "@/lib/db/client";
 import * as s from "@/lib/db/schema";
 import { UserError } from "@/lib/errors";
+import { getFunctionWithEvent } from "@/lib/functions/service";
 import { hasEntitlement } from "@/lib/gating/access";
 import { signedReadUrl, validateUpload } from "@/lib/storage";
 
@@ -26,6 +27,8 @@ export type ContentItemInput = z.input<typeof itemInput>;
 export async function addContentItem(functionId: string, raw: ContentItemInput): Promise<{ id: string }> {
   const input = itemInput.parse(raw);
   if (input.kind === "file") {
+    const info = await getFunctionWithEvent(functionId);
+    if (!info || !input.storageKey.startsWith(`content/${info.org.id}/`)) throw new UserError("Upload the file again");
     try {
       validateUpload({ filename: input.storageKey, mime: input.mime, size: input.size });
     } catch (e) {

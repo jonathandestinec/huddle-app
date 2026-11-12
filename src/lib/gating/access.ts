@@ -1,9 +1,11 @@
 import bcrypt from "bcryptjs";
-import { and, count, eq, gt } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { db, type Executor, type Tx } from "@/lib/db/client";
 import * as s from "@/lib/db/schema";
 import { sendAccessEmail } from "@/lib/email/access";
 import { UserError } from "@/lib/errors";
+import { assertEventOpen, getFunctionWithEvent } from "@/lib/functions/service";
+import { consumeRateLimit } from "@/lib/ratelimit";
 import { getFunctionDefinition } from "@/functions/registry";
 import type { EntitlementSource, Gate, Payment } from "@/functions/types";
 
@@ -66,8 +68,16 @@ export async function grantEntitlement(
   return { created: true };
 }
 
+async function loadOpenFn(functionId: string) {
+  const info = await getFunctionWithEvent(functionId);
+  if (!info) throw new UserError("Function not found");
+  // Content stays unlockable after an event ends; drafts never are.
+  assertEventOpen(info.event, { allowEnded: true });
+  return info.fn;
+}
+
 export async function unlockFree(userId: string, functionId: string): Promise<{ created: boolean }> {
-  const f = await loadFn(functionId);
+  const f = await loadOpenFn(functionId);
   if (f.gate !== "free") throw new UserError("This one isn't free");
   const r = await db.transaction((tx) => grantEntitlement(tx, { userId, functionId, source: "free" }));
   if (r.created) sendAccessEmail(userId, functionId, "registered");
@@ -80,15 +90,19 @@ export async function unlockWithCode(
   code: string,
   ipHash: string,
 ): Promise<{ ok: true } | { ok: false; error: "That code didn't work" | "Too many tries — wait a few minutes" }> {
-  const f = await loadFn(functionId);
+  const f = await loadOpenFn(functionId);
   if (f.gate !== "code" || !f.accessCodeHash) return { ok: false, error: "That code didn't work" };
 
-  const since = new Date(Date.now() - CODE_WINDOW_MS);
-  const [{ n }] = await db
-    .select({ n: count() })
-    .from(s.codeAttempts)
-    .where(and(eq(s.codeAttempts.eventFunctionId, functionId), eq(s.codeAttempts.ipHash, ipHash), gt(s.codeAttempts.attemptedAt, since)));
-  if (n >= CODE_ATTEMPT_LIMIT) return { ok: false, error: "Too many tries — wait a few minutes" };
+  // Every attempt counts, atomically: per IP, per person, and a per-function ceiling against distributed guessing.
+  const allowed = await consumeRateLimit(
+    [
+      { key: `code:${functionId}:ip:${ipHash}`, limit: CODE_ATTEMPT_LIMIT },
+      { key: `code:${functionId}:user:${userId}`, limit: CODE_ATTEMPT_LIMIT * 2 },
+      { key: `code:${functionId}:all`, limit: 300 },
+    ],
+    CODE_WINDOW_MS,
+  );
+  if (!allowed) return { ok: false, error: "Too many tries — wait a few minutes" };
 
   if (!(await bcrypt.compare(code.trim(), f.accessCodeHash))) {
     await db.insert(s.codeAttempts).values({ eventFunctionId: functionId, ipHash });

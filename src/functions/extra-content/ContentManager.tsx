@@ -22,7 +22,7 @@ export function ContentManager({ functionId, items }: { functionId: string; item
     for (const file of Array.from(files)) {
       try {
         setProgress(0);
-        const key = await uploadFile(file, "content", setProgress);
+        const key = await uploadFile(file, "content", setProgress, functionId);
         const r = await addContentItemAction(functionId, {
           kind: "file",
           title: file.name.replace(/\.[^.]+$/, ""),

@@ -1,5 +1,6 @@
 import { eq } from "drizzle-orm";
 import { z } from "zod";
+import { assertVerified } from "@/lib/auth/permissions";
 import { db } from "@/lib/db/client";
 import * as s from "@/lib/db/schema";
 import { UserError, isUniqueViolation } from "@/lib/errors";
@@ -24,7 +25,9 @@ export async function createOrganisation(
   raw: z.input<typeof createInput>,
 ): Promise<{ id: string; slug: string }> {
   const input = createInput.parse(raw);
+  await assertVerified(userId);
   if (isReservedSlug(input.slug)) throw new UserError("That link is taken");
+  if (input.logoKey && !input.logoKey.startsWith(`logos/u-${userId}/`)) throw new UserError("Upload the logo again");
   try {
     return await db.transaction(async (tx) => {
       const [org] = await tx

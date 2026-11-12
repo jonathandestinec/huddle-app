@@ -236,6 +236,17 @@ export const contentItems = pgTable("content_items", {
   position: integer("position").notNull().default(0),
 });
 
+/** Generic sliding-window rate limit events (identify, access codes). */
+export const rateEvents = pgTable(
+  "rate_events",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    key: text("key").notNull(),
+    at: ts("at").notNull().defaultNow(),
+  },
+  (t) => [index("rate_events_key_at").on(t.key, t.at)],
+);
+
 export const codeAttempts = pgTable(
   "code_attempts",
   {

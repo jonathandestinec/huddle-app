@@ -36,8 +36,14 @@ function sanitise(filename: string) {
   return `${base.slice(0, 60)}.${filename.slice(dot + 1).toLowerCase()}`;
 }
 
-export function validateUpload(input: { filename: string; mime: string; size: number }) {
+export const MAX_IMAGE_BYTES = 10 * 1024 * 1024;
+
+export function validateUpload(input: { filename: string; mime: string; size: number; prefix?: UploadPrefix }) {
   if (input.size > MAX_UPLOAD_BYTES) throw new Error("Files can be up to 500 MB");
+  if (input.prefix && input.prefix !== "content") {
+    if (!input.mime.startsWith("image/")) throw new Error("Logos and covers must be JPG or PNG");
+    if (input.size > MAX_IMAGE_BYTES) throw new Error("Images can be up to 10 MB");
+  }
   const ext = input.filename.split(".").pop()?.toLowerCase() ?? "";
   const expected = ALLOWED_TYPES[ext];
   if (!expected || expected !== input.mime) {
@@ -47,12 +53,14 @@ export function validateUpload(input: { filename: string; mime: string; size: nu
 
 export async function createUploadUrl(input: {
   prefix: UploadPrefix;
+  /** Owner scope from authorizeUpload (org id or u-<userId>). */
+  scope: string;
   filename: string;
   mime: string;
   size: number;
 }): Promise<{ key: string; url: string }> {
   validateUpload(input);
-  const key = `${input.prefix}/${randomUUID()}/${sanitise(input.filename)}`;
+  const key = `${input.prefix}/${input.scope}/${randomUUID()}/${sanitise(input.filename)}`;
   const url = await getSignedUrl(
     s3(),
     new PutObjectCommand({ Bucket: getEnv().S3_BUCKET, Key: key, ContentType: input.mime, ContentLength: input.size }),

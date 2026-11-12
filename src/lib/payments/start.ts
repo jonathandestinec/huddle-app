@@ -4,7 +4,7 @@ import { db } from "@/lib/db/client";
 import * as s from "@/lib/db/schema";
 import { getEnv } from "@/lib/env";
 import { UserError } from "@/lib/errors";
-import { getFunctionWithEvent } from "@/lib/functions/service";
+import { assertEventOpen, getFunctionWithEvent } from "@/lib/functions/service";
 import { hasEntitlement } from "@/lib/gating/access";
 import { initializeTransaction } from "@/lib/paystack/client";
 import { huddleFeeKobo } from "@/lib/paystack/fees";
@@ -21,6 +21,7 @@ export async function startPaidUnlock(
   const r = await getFunctionWithEvent(functionId);
   if (!r) throw new UserError("Function not found");
   const { fn, event, org } = r;
+  assertEventOpen(event);
   if (fn.gate !== "paid" || !fn.priceKobo) throw new UserError("This one isn't paid");
   if (!org.paystackSubaccountCode) throw new UserError("This organisation can't take payments yet");
   if (await hasEntitlement(userId, functionId)) throw new UserError("You already have this");
@@ -48,5 +49,10 @@ export async function startPaidUnlock(
     transactionChargeKobo: fee,
     metadata: { ...metadata, functionId, huddle: true },
   });
+  // Kept so a re-pick can reuse this checkout instead of opening a second charge.
+  await db
+    .update(s.payments)
+    .set({ metadata: { ...metadata, authorizationUrl } })
+    .where(eq(s.payments.paystackReference, reference));
   return { authorizationUrl, reference };
 }

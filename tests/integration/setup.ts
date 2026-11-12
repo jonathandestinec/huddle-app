@@ -4,6 +4,7 @@ import { db } from "@/lib/db/client";
 import * as s from "@/lib/db/schema";
 
 const APP_TABLES = [
+  "rate_events",
   "code_attempts",
   "content_items",
   "rsvps",

@@ -1,4 +1,6 @@
-import { eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
+import { getFunctionWithEvent } from "@/lib/functions/service";
+import { notifyOwners } from "@/lib/orgs/notify";
 import { db } from "@/lib/db/client";
 import * as s from "@/lib/db/schema";
 import { sendAccessEmail } from "@/lib/email/access";
@@ -40,14 +42,33 @@ export async function settlePayment(reference: string, source: "webhook" | "veri
       .set({ status: "success", settledAt: new Date() })
       .where(eq(s.payments.id, p.id))
       .returning();
-    await grantEntitlement(tx, {
+    const { created } = await grantEntitlement(tx, {
       userId: updated.userId,
       functionId: updated.eventFunctionId,
       source: "payment",
       payment: updated,
     });
+    if (!created) {
+      // They already had access — this charge bought nothing. Flag it for a refund.
+      await tx
+        .update(s.payments)
+        .set({ metadata: sql`${s.payments.metadata} || '{"duplicate": true}'::jsonb` })
+        .where(eq(s.payments.id, p.id));
+      return "duplicate" as const;
+    }
     return "settled" as const;
   });
+  if (result === "duplicate") {
+    const info = await getFunctionWithEvent(existing.eventFunctionId);
+    if (info) {
+      notifyOwners(
+        info.org.id,
+        `Duplicate payment on "${info.event.title}" — refund needed`,
+        `Payment ${reference} (${existing.amountKobo / 100} NGN) came from someone who already had access. Please refund it from your Paystack dashboard.`,
+      );
+    }
+    return "settled";
+  }
   if (result === "settled") sendAccessEmail(existing.userId, existing.eventFunctionId, "receipt", existing.amountKobo);
   return result;
 }

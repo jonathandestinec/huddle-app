@@ -113,6 +113,6 @@ describe("settlePayment", () => {
     await settlePayment(reference, "webhook");
     await settlePayment(reference, "webhook");
     expect(hook).toHaveBeenCalledTimes(1);
-    expect((hook.mock.calls[0] as unknown as [{ payment: { metadata: unknown } }])[0].payment.metadata).toEqual({ claimId: "c9" });
+    expect((hook.mock.calls[0] as unknown as [{ payment: { metadata: unknown } }])[0].payment.metadata).toMatchObject({ claimId: "c9" });
   });
 });

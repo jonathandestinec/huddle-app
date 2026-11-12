@@ -44,11 +44,12 @@ export async function rsvpOnEntitled(ctx: EntitledContext): Promise<void> {
   }
 }
 
-export type ReserveResult = { ok: true } | { ok: false; error: "This one's full" | "Unlock this first" | "This event has ended" };
+export type ReserveResult = { ok: true } | { ok: false; error: "This one's full" | "Unlock this first" | "This event has ended" | "This event isn't open yet" };
 
 export async function reserveSeat(userId: string, functionId: string): Promise<ReserveResult> {
   const info = await getFunctionWithEvent(functionId);
   if (!info || info.fn.type !== "rsvp") throw new Error("Not an RSVP function");
+  if (info.event.status === "draft") return { ok: false, error: "This event isn't open yet" };
   if (info.event.status === "ended") return { ok: false, error: "This event has ended" };
 
   const entitled = await hasEntitlement(userId, functionId);

@@ -29,7 +29,8 @@ const eventInput = z.object({
 
 export type EventInput = z.input<typeof eventInput>;
 
-function toRow(input: z.output<typeof eventInput>) {
+function toRow(input: z.output<typeof eventInput>, organisationId: string) {
+  if (input.coverKey && !input.coverKey.startsWith(`covers/${organisationId}/`)) throw new UserError("Upload the cover image again");
   const startsAt = lagosLocalToUtc(input.startsAtLocal);
   const endsAt = input.endsAtLocal ? lagosLocalToUtc(input.endsAtLocal) : null;
   if (endsAt && endsAt <= startsAt) throw new UserError("The event can't end before it starts");
@@ -60,7 +61,7 @@ async function uniqueSlug(organisationId: string, wanted: string): Promise<strin
 
 export async function createEvent(organisationId: string, raw: EventInput): Promise<{ id: string; slug: string }> {
   const input = eventInput.parse(raw);
-  const row = toRow(input);
+  const row = toRow(input, organisationId);
   const slug = await uniqueSlug(organisationId, input.slug || input.title);
   const [ev] = await db
     .insert(s.events)
@@ -70,7 +71,9 @@ export async function createEvent(organisationId: string, raw: EventInput): Prom
 }
 
 export async function updateEvent(eventId: string, raw: EventInput): Promise<void> {
-  const row = toRow(eventInput.parse(raw));
+  const [ev] = await db.select({ org: s.events.organisationId }).from(s.events).where(eq(s.events.id, eventId));
+  if (!ev) throw new UserError("Event not found");
+  const row = toRow(eventInput.parse(raw), ev.org);
   await db.update(s.events).set(row).where(eq(s.events.id, eventId));
 }
 

@@ -34,9 +34,10 @@ export async function unlockWithCodeAction(functionId: string, code: string) {
   });
 }
 
-export async function startPaidUnlockAction(functionId: string, metadata: Record<string, unknown> = {}) {
+/** Metadata is never taken from the client — only claimNumber builds payment metadata server-side. */
+export async function startPaidUnlockAction(functionId: string) {
   return toActionResult(async () => {
     const u = await viewer();
-    return startPaidUnlock(u.id, functionId, metadata);
+    return startPaidUnlock(u.id, functionId, {});
   });
 }

@@ -108,6 +108,12 @@ export async function removeFunction(functionId: string): Promise<void> {
   await db.delete(s.eventFunctions).where(eq(s.eventFunctions.id, functionId));
 }
 
+/** Attendees can't act on drafts at all, and can't start anything new (pay, claim, reserve) once an event has ended. */
+export function assertEventOpen(event: { status: "draft" | "published" | "ended" }, opts: { allowEnded?: boolean } = {}) {
+  if (event.status === "draft") throw new UserError("This event isn't open yet");
+  if (event.status === "ended" && !opts.allowEnded) throw new UserError("This event has ended");
+}
+
 export async function getFunctionWithEvent(functionId: string) {
   const [r] = await db
     .select({ fn: s.eventFunctions, event: s.events, org: s.organisations })

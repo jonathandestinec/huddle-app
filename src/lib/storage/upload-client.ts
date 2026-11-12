@@ -3,8 +3,13 @@ import { createUploadUrlAction } from "./actions";
 import type { UploadPrefix } from "./index";
 
 /** Uploads straight to storage with a presigned PUT. Reports progress 0–1. Returns the storage key. */
-export async function uploadFile(file: File, prefix: UploadPrefix, onProgress?: (p: number) => void): Promise<string> {
-  const res = await createUploadUrlAction({ prefix, filename: file.name, mime: file.type, size: file.size });
+export async function uploadFile(
+  file: File,
+  prefix: UploadPrefix,
+  onProgress?: (p: number) => void,
+  functionId?: string,
+): Promise<string> {
+  const res = await createUploadUrlAction({ prefix, filename: file.name, mime: file.type, size: file.size, functionId });
   if (!res.ok) throw new Error(res.error);
   const { key, url } = res.data;
   await new Promise<void>((resolve, reject) => {

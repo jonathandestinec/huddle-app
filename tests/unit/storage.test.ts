@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { MAX_UPLOAD_BYTES, createUploadUrl, signedReadUrl } from "@/lib/storage";
 
-const ok = { prefix: "content" as const, filename: "Sermon Notes.pdf", mime: "application/pdf", size: 1024 };
+const ok = { prefix: "content" as const, scope: "org123", filename: "Sermon Notes.pdf", mime: "application/pdf", size: 1024 };
 
 describe("createUploadUrl", () => {
   it("rejects files over 500 MB", async () => {
@@ -20,7 +20,7 @@ describe("createUploadUrl", () => {
 
   it("builds a namespaced key with a random id and sanitised filename", async () => {
     const { key, url } = await createUploadUrl(ok);
-    expect(key).toMatch(/^content\/[a-z0-9-]{10,}\/sermon-notes\.pdf$/);
+    expect(key).toMatch(/^content\/org123\/[a-z0-9-]{10,}\/sermon-notes\.pdf$/);
     expect(url).toContain("X-Amz-Signature");
   });
 });

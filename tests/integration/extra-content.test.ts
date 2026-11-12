@@ -5,9 +5,10 @@ import { addContentItem, contentRedirect, listContent, reorderContent } from "@/
 import { makeEvent, makeFunction, makeOrg, makeUser, resetDb } from "./setup";
 
 async function content(eventOverrides = {}) {
-  const ev = await makeEvent((await makeOrg()).id, eventOverrides);
+  const org = await makeOrg();
+  const ev = await makeEvent(org.id, eventOverrides);
   const f = await makeFunction(ev.id, { type: "extra_content", config: {}, gate: "code", accessCodeHash: "x" });
-  const file = await addContentItem(f.id, { kind: "file", title: "Sermon audio", storageKey: "content/abc/sermon.mp3", mime: "audio/mpeg", size: 1000 });
+  const file = await addContentItem(f.id, { kind: "file", title: "Sermon audio", storageKey: `content/${org.id}/abc/sermon.mp3`, mime: "audio/mpeg", size: 1000 });
   const link = await addContentItem(f.id, { kind: "link", title: "Slides", url: "https://example.com/slides" });
   return { f, file, link };
 }
@@ -60,7 +61,7 @@ describe("extra content", () => {
   it("rejects disallowed file types", async () => {
     const { f } = await content();
     await expect(
-      addContentItem(f.id, { kind: "file", title: "x", storageKey: "content/a/x.exe", mime: "application/octet-stream", size: 10 }),
+      addContentItem(f.id, { kind: "file", title: "x", storageKey: `content/${(await makeOrg()).id}/a/x.exe`, mime: "application/octet-stream", size: 10 }),
     ).rejects.toThrow();
   });
 

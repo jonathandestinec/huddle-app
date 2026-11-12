@@ -2,6 +2,7 @@ import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { nextCookies } from "better-auth/next-js";
 import { magicLink } from "better-auth/plugins";
+import { eq } from "drizzle-orm";
 import { createElement } from "react";
 import { db } from "@/lib/db/client";
 import * as schema from "@/lib/db/schema";
@@ -23,6 +24,18 @@ export const auth = betterAuth({
     google: { clientId: env.GOOGLE_CLIENT_ID, clientSecret: env.GOOGLE_CLIENT_SECRET },
   },
   session: { expiresIn: 60 * 60 * 24 * 30 },
+  databaseHooks: {
+    account: {
+      create: {
+        // When someone proves an email through Google, drop any sessions that existed before —
+        // e.g. one an impostor got by typing this email into an event page first.
+        after: async (account) => {
+          if (account.providerId === "credential") return;
+          await db.delete(schema.session).where(eq(schema.session.userId, account.userId));
+        },
+      },
+    },
+  },
   plugins: [
     magicLink({
       sendMagicLink: async ({ email, url }) => {

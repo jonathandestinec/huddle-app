@@ -16,6 +16,7 @@ export type ClaimError =
   | `You already hold #${number}`
   | "That number isn't in range"
   | "This event has ended"
+  | "This event isn't open yet"
   | "Unlock this first";
 
 export type ClaimResult =
@@ -42,6 +43,7 @@ async function mapUnique(err: unknown, userId: string, functionId: string, n: nu
 export async function claimNumber(userId: string, functionId: string, n: number): Promise<ClaimResult> {
   const info = await getFunctionWithEvent(functionId);
   if (!info || info.fn.type !== "number_picker") throw new Error("Not a number picker");
+  if (info.event.status === "draft") return { ok: false, error: "This event isn't open yet" };
   if (info.event.status === "ended") return { ok: false, error: "This event has ended" };
   const { min, max } = numberPickerConfigSchema.parse(info.fn.config);
   if (!Number.isInteger(n) || n < min || n > max) return { ok: false, error: "That number isn't in range" };
@@ -60,7 +62,39 @@ export async function claimNumber(userId: string, functionId: string, n: number)
 
   const mine = await myClaim(userId, functionId);
   if (mine?.status === "confirmed") return { ok: false, error: `You already hold #${mine.number}` };
-  if (mine?.status === "held") await db.delete(s.numberClaims).where(eq(s.numberClaims.id, mine.id)); // re-pick
+  if (mine?.status === "held") {
+    // Re-pick while unpaid: move the hold and reuse the same checkout, so there's only ever one charge.
+    const [pending] = await db
+      .select()
+      .from(s.payments)
+      .where(
+        and(
+          eq(s.payments.userId, userId),
+          eq(s.payments.eventFunctionId, functionId),
+          eq(s.payments.status, "pending"),
+          sql`${s.payments.metadata}->>'claimId' = ${mine.id}`,
+        ),
+      )
+      .limit(1);
+    const url = (pending?.metadata as { authorizationUrl?: string } | undefined)?.authorizationUrl;
+    if (pending && url) {
+      try {
+        await db
+          .update(s.numberClaims)
+          .set({ number: n, holdExpiresAt: new Date(Date.now() + HOLD_MS) })
+          .where(eq(s.numberClaims.id, mine.id));
+      } catch (err) {
+        if (isUniqueViolation(err)) return mapUnique(err, userId, functionId, n);
+        throw err;
+      }
+      await db
+        .update(s.payments)
+        .set({ metadata: { ...(pending.metadata as object), number: n } })
+        .where(eq(s.payments.id, pending.id));
+      return { ok: true, status: "held", authorizationUrl: url };
+    }
+    await db.delete(s.numberClaims).where(eq(s.numberClaims.id, mine.id));
+  }
 
   const entitled = await hasEntitlement(userId, functionId);
   const gate = info.fn.gate;
@@ -102,15 +136,23 @@ export async function claimNumber(userId: string, functionId: string, n: number)
 export async function numberPickerOnEntitled(ctx: EntitledContext): Promise<void> {
   if (!ctx.payment) return;
   const meta = ctx.payment.metadata as { claimId?: string; number?: number };
-  if (meta.claimId) {
+  if (typeof meta.claimId === "string") {
     const updated = await ctx.tx
       .update(s.numberClaims)
       .set({ status: "confirmed", holdExpiresAt: null })
-      .where(and(eq(s.numberClaims.id, meta.claimId), eq(s.numberClaims.userId, ctx.userId)))
+      .where(
+        and(
+          eq(s.numberClaims.id, meta.claimId),
+          eq(s.numberClaims.userId, ctx.userId),
+          eq(s.numberClaims.eventFunctionId, ctx.functionId),
+        ),
+      )
       .returning({ id: s.numberClaims.id });
     if (updated.length) return;
   }
-  if (typeof meta.number === "number") {
+  const [fn] = await ctx.tx.select().from(s.eventFunctions).where(eq(s.eventFunctions.id, ctx.functionId));
+  const { min, max } = numberPickerConfigSchema.parse(fn.config);
+  if (typeof meta.number === "number" && Number.isInteger(meta.number) && meta.number >= min && meta.number <= max) {
     await ctx.tx
       .insert(s.numberClaims)
       .values({ eventFunctionId: ctx.functionId, number: meta.number, userId: ctx.userId, status: "confirmed" })
