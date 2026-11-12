@@ -1,0 +1,30 @@
+@import "tailwindcss";
+
+@theme {
+  --color-huddle-yellow: #ffe76c;
+  --color-ink: #1a1a1a;
+  --color-paper: #fafaf8;
+  --color-surface: #ffffff;
+  --color-slate: #64748b;
+  --font-sans: var(--font-urbanist), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-instrument-serif), ui-serif, Georgia, serif;
+}
+
+html {
+  color-scheme: light;
+}
+
+body {
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
