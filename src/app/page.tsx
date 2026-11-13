@@ -32,12 +32,12 @@ function LogoMark({ className = "" }: { className?: string }) {
 function Nav() {
   return (
     <header className="sticky top-0 z-40 bg-white">
-      <nav className="relative mx-auto flex h-[84px] max-w-[1280px] items-center gap-2 px-4 sm:px-5 xl:h-[108px] xl:px-[78px]" aria-label="Main">
-        <Link href="/" className="flex items-center gap-[10px] rounded-[10px] text-[28px] font-semibold tracking-[-0.01em] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-ink/20 xl:text-[38px]" aria-label="Huddle home">
-          <LogoMark className="h-[30px] w-auto xl:h-[36px]" />
+      <nav className="relative mx-auto flex h-[84px] max-w-[1280px] items-center gap-2 px-4 sm:px-5 lg:h-[108px] lg:px-[78px]" aria-label="Main">
+        <Link href="/" className="flex items-center gap-[10px] rounded-[10px] text-[28px] font-semibold tracking-[-0.01em] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-ink/20 lg:text-[38px]" aria-label="Huddle home">
+          <LogoMark className="h-[30px] w-auto lg:h-[36px]" />
           Huddle
         </Link>
-        <div className="ml-[128px] hidden gap-[39px] text-[19px] xl:flex">
+        <div className="ml-[128px] hidden gap-[39px] text-[19px] lg:flex">
           <a href="#features" className={navLink}>
             Features
           </a>
@@ -51,7 +51,7 @@ function Nav() {
             Pricing
           </a>
         </div>
-        <Link href="/login" className={`${pillYellow} ml-auto h-[44px] px-5 text-[16px] sm:px-6 sm:text-[17px] xl:h-[48px] xl:w-[209px] xl:text-[19px]`}>
+        <Link href="/login" className={`${pillYellow} ml-auto h-[44px] px-5 text-[16px] sm:px-6 sm:text-[17px] lg:h-[48px] lg:w-[209px] lg:text-[19px]`}>
           Join The Huddle
         </Link>
         <MobileMenu />
@@ -62,23 +62,23 @@ function Nav() {
 
 function Hero() {
   return (
-    <section className="relative isolate overflow-hidden text-center xl:h-[1043px]">
-      <div className="hero-enter relative z-10 mx-auto max-w-[1280px] px-5 pt-8 xl:pt-[40px]">
-        <Image src="/landing/hero-woman.png" alt="" width={216} height={212} priority className="mx-auto h-auto w-[170px] xl:w-[216px]" />
-        <p className="mt-6 flex items-center justify-center gap-4 text-[14px] xl:mt-[18px] xl:text-[16px]">
+    <section className="relative isolate overflow-hidden text-center lg:h-[1043px]">
+      <div className="hero-enter relative z-10 mx-auto max-w-[1280px] px-5 pt-8 lg:pt-[40px]">
+        <Image src="/landing/hero-woman.png" alt="" width={216} height={212} priority className="mx-auto h-auto w-[170px] lg:w-[216px]" />
+        <p className="mt-6 flex items-center justify-center gap-4 text-[14px] lg:mt-[18px] lg:text-[16px]">
           Introducing Plugins
           <Image src="/landing/sparkles.png" alt="" width={46} height={33} className="h-auto w-[46px]" />
           Organise Meetings
         </p>
-        <h1 className="mx-auto mt-5 text-balance font-serif text-[44px] leading-[0.95] tracking-[-0.01em] sm:text-[60px] xl:mt-[22px] xl:text-[76px] xl:leading-[0.86]">
+        <h1 className="mx-auto mt-5 text-balance font-serif text-[44px] leading-[0.95] tracking-[-0.01em] sm:text-[60px] lg:mt-[22px] lg:text-[76px] lg:leading-[0.86]">
           Join the huddle.
           <br />
           Connect, <em>monetize</em> your <span className="text-[#656565]">communities.</span>
         </h1>
-        <p className="mx-auto mt-6 max-w-[560px] text-pretty text-[17px] leading-[1.42] xl:mt-[36px] xl:text-[20px]">
+        <p className="mx-auto mt-6 max-w-[560px] text-pretty text-[17px] leading-[1.42] lg:mt-[36px] lg:text-[20px]">
           The platform that lets organisations run events, gate exclusive content, and earn from their community. All in one place.
         </p>
-        <div className="mt-8 flex flex-col items-center gap-[19px] xl:mt-[41px]">
+        <div className="mt-8 flex flex-col items-center gap-[19px] lg:mt-[41px]">
           <Link href="/login" className={`${pillYellow} h-[48px] w-[209px] text-[20px]`}>
             Get started
           </Link>
@@ -89,11 +89,11 @@ function Hero() {
       </div>
 
       {/* The ribbon, with the unlocked file chip sitting on it. */}
-      <div className="relative -mt-14 h-[300px] sm:mt-6 sm:h-[360px] xl:absolute xl:inset-x-0 xl:top-[532px] xl:mt-0 xl:h-[470px]">
-        <div className="absolute inset-y-0 left-1/2 w-[1312px] -translate-x-1/2 max-xl:w-[1000px] max-sm:w-[820px]">
+      <div className="relative -mt-14 h-[300px] sm:mt-6 sm:h-[360px] lg:absolute lg:inset-x-0 lg:top-[532px] lg:mt-0 lg:h-[470px]">
+        <div className="absolute inset-y-0 left-1/2 w-[2900px] -translate-x-1/2 max-lg:w-[2210px] max-sm:w-[1812px]">
           <Ribbon className="h-full w-full" />
-          <span className="absolute left-[585px] top-[249px] flex h-[60px] w-[145px] items-center gap-[12px] rounded-full bg-ink pl-[16px] text-[20px] text-white max-xl:left-[443px] max-xl:top-[178px] max-xl:h-[48px] max-xl:w-[118px] max-xl:gap-2 max-xl:pl-3 max-xl:text-[17px] max-sm:left-[363px] max-sm:top-[150px] max-sm:h-[42px] max-sm:w-[104px] max-sm:text-[15px]">
-            <Image src="/landing/icon-unlock.png" alt="" width={21} height={33} className="h-[33px] w-auto max-xl:h-[26px] max-sm:h-[22px]" />
+          <span className="absolute left-[1379px] top-[249px] flex h-[60px] w-[145px] items-center gap-[12px] rounded-full bg-ink pl-[16px] text-[20px] text-white max-lg:left-[1048px] max-lg:top-[178px] max-lg:h-[48px] max-lg:w-[118px] max-lg:gap-2 max-lg:pl-3 max-lg:text-[17px] max-sm:left-[859px] max-sm:top-[150px] max-sm:h-[42px] max-sm:w-[104px] max-sm:text-[15px]">
+            <Image src="/landing/icon-unlock.png" alt="" width={21} height={33} className="h-[33px] w-auto max-lg:h-[26px] max-sm:h-[22px]" />
             Book.pdf
           </span>
         </div>
@@ -113,25 +113,25 @@ const LOGOS = [
 
 function WhatIs() {
   return (
-    <section className="mx-auto mt-10 max-w-[1280px] px-3 sm:px-4 xl:mt-0 xl:px-0">
-      <div className="relative z-10 overflow-hidden rounded-[56px] bg-huddle-purple px-6 pb-12 pt-14 text-white xl:h-[828px] xl:rounded-[120px] xl:px-[133px] xl:pb-0 xl:pt-[160px]">
-        <div className="xl:max-w-[575px]">
+    <section className="mx-auto mt-10 max-w-[1280px] px-3 sm:px-4 lg:mt-0 lg:px-0">
+      <div className="relative z-10 overflow-hidden rounded-[56px] bg-huddle-purple px-6 pb-12 pt-14 text-white lg:h-[828px] lg:rounded-[120px] lg:px-[133px] lg:pb-0 lg:pt-[160px]">
+        <div className="lg:max-w-[575px]">
           <h2 className={serifH2}>
             What is
             <br />
             Huddle?
           </h2>
-          <p className="mt-8 text-[17px] leading-[1.42] xl:mt-[26px] xl:text-[19px]">
+          <p className="mt-8 text-[17px] leading-[1.42] lg:mt-[26px] lg:text-[19px]">
             Huddle is a platform designed for churches, schools, and organizations to seamlessly monetize their live events.
             <br />
             Through modular capabilities called Functions, you can customize your meetings to fit your exact needs. Easily activate Content
             Protection to lock video recordings and digital resources behind a secure paywall, or use our anonymous Number Picker to
             randomly reward attendees and grant them special privileges during your call.
           </p>
-          <p className="mt-6 text-[17px] leading-[1.42] xl:mt-[26px] xl:text-[19px]">
+          <p className="mt-6 text-[17px] leading-[1.42] lg:mt-[26px] lg:text-[19px]">
             Huddle is packed with dozens of intuitive tools built to give you complete control over your meetings.
           </p>
-          <a href="#features" className="group mt-10 inline-flex items-center gap-[54px] rounded-[8px] text-[17px] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white/40 xl:mt-[58px] xl:text-[19px]">
+          <a href="#features" className="group mt-10 inline-flex items-center gap-[54px] rounded-[8px] text-[17px] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white/40 lg:mt-[58px] lg:text-[19px]">
             Discover how Huddle Functions work
             <svg width="33" height="16" viewBox="0 0 33 16" fill="none" aria-hidden="true" className="transition-transform duration-300 ease-[var(--ease-out)] group-hover:translate-x-[6px] group-focus-visible:translate-x-[6px]">
               <path d="M1 8h30M24 1l7 7-7 7" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
@@ -140,8 +140,8 @@ function WhatIs() {
         </div>
 
         {/* Phone with locked material, the yellow blob and the leaf. */}
-        <div className="relative mx-auto mt-12 h-[650px] w-[315px] xl:absolute xl:left-[830px] xl:top-[89px] xl:mt-0">
-          <Image src="/landing/blob-yellow.png" alt="" width={124} height={129} className="absolute -left-[138px] -top-[50px] w-[120px] max-xl:-left-6 max-xl:-top-10 max-xl:w-20" />
+        <div className="relative mx-auto mt-12 h-[650px] w-[315px] lg:absolute lg:left-[830px] lg:top-[89px] lg:mt-0">
+          <Image src="/landing/blob-yellow.png" alt="" width={124} height={129} className="absolute -left-[138px] -top-[50px] w-[120px] max-lg:-left-6 max-lg:-top-10 max-lg:w-20" />
           <div className="absolute inset-[13px] overflow-hidden rounded-[46px] bg-[radial-gradient(28%_18%_at_80%_22%,rgba(184,112,52,0.4),transparent),radial-gradient(30%_22%_at_18%_40%,rgba(130,74,36,0.38),transparent),radial-gradient(120%_70%_at_30%_15%,#6b3d1c_0%,#3d2210_45%,#1d1007_100%)]">
             <p className="mx-auto mt-[84px] w-[160px] text-center text-[24px] leading-[29px]">Weekly Study Guide.pdf</p>
             <div className="relative mx-auto mt-[54px] w-[110px]">
@@ -159,13 +159,13 @@ function WhatIs() {
             <span className="mx-auto mt-[12px] block h-px w-[98px] bg-white/80" />
           </div>
           <Image src="/landing/iphone-frame.png" alt="" width={319} height={650} className="pointer-events-none absolute inset-0 h-full w-full" />
-          <Image src="/landing/leaf.png" alt="" width={107} height={174} className="absolute -right-[107px] top-[543px] w-[107px] max-xl:-right-4 max-xl:top-[520px] max-xl:w-16" />
+          <Image src="/landing/leaf.png" alt="" width={107} height={174} className="absolute -right-[107px] top-[543px] w-[107px] max-lg:-right-4 max-lg:top-[520px] max-lg:w-16" />
         </div>
       </div>
 
-      <div className="-mt-[120px] rounded-b-[56px] bg-ink px-6 pb-12 pt-[150px] text-center xl:h-[355px] xl:rounded-b-[120px] xl:pb-0 xl:pt-[174px]">
-        <p className="text-[22px] tracking-[0.04em] text-[#FFFBE6] xl:text-[24px]">Huddle Supports</p>
-        <ul className="mt-8 flex flex-wrap items-center justify-center gap-x-[31px] gap-y-5 xl:mt-[43px]">
+      <div className="-mt-[120px] rounded-b-[56px] bg-ink px-6 pb-12 pt-[150px] text-center lg:h-[355px] lg:rounded-b-[120px] lg:pb-0 lg:pt-[174px]">
+        <p className="text-[22px] tracking-[0.04em] text-[#FFFBE6] lg:text-[24px]">Huddle Supports</p>
+        <ul className="mt-8 flex flex-wrap items-center justify-center gap-x-[31px] gap-y-5 lg:mt-[43px]">
           {LOGOS.map((l) => (
             <li key={l.src}>
               <Image src={`/landing/logos/${l.src}.svg`} alt={l.alt} width={l.w} height={l.h} className="h-auto" style={{ width: l.w }} />
@@ -178,11 +178,11 @@ function WhatIs() {
 }
 
 function Quote() {
-  const chip = "mx-[24px] inline-block h-[56px] w-[46px] -translate-y-[6px] rounded-[12px] object-cover align-middle sm:h-[82px] sm:w-[67px] sm:rounded-[14px]";
+  const chip = "mx-[8px] inline-block h-[42px] w-[34px] -translate-y-[4px] rounded-[10px] sm:mx-[24px] sm:-translate-y-[6px] object-cover align-middle sm:h-[82px] sm:w-[67px] sm:rounded-[14px]";
   // The grey words step lighter across the quote, as in the design (solid colours, no gradient text).
   return (
-    <section className="mx-auto max-w-[900px] px-5 py-[160px] text-center xl:pb-[423px] xl:pt-[451px]">
-      <p className="font-serif text-[40px] leading-[1.35] sm:text-[72px] sm:leading-[103px]">
+    <section className="mx-auto max-w-[900px] px-5 py-[96px] text-center sm:py-[140px] lg:pb-[423px] lg:pt-[451px]">
+      <p className="text-balance font-serif text-[34px] leading-[1.45] sm:text-[56px] lg:text-[72px] lg:leading-[103px]">
         &ldquo;Have all of
         <Image src="/landing/quote-1.png" alt="" width={82} height={97} className={chip} />
         the tools <span className="text-[#4a4a4a]">you</span>
@@ -201,17 +201,17 @@ const FEATURE_CHIPS = ["Vault", "Voting & Polls", "Q&A Queue", "Certificate", "R
 
 function Features() {
   return (
-    <section id="features" className="mx-auto max-w-[1280px] scroll-mt-28 px-3 sm:px-4 xl:px-0">
-      <div className="relative overflow-hidden rounded-[56px] bg-ink px-6 py-14 text-white xl:h-[614px] xl:rounded-[110px] xl:px-[133px] xl:py-0 xl:pt-[96px]">
+    <section id="features" className="mx-auto max-w-[1280px] scroll-mt-28 px-3 sm:px-4 lg:px-0">
+      <div className="relative overflow-hidden rounded-[56px] bg-ink px-6 py-14 text-white lg:h-[614px] lg:rounded-[110px] lg:px-[133px] lg:py-0 lg:pt-[96px]">
         <h2 className={serifH2}>Features</h2>
-        <p className="mt-6 text-[28px] leading-tight xl:mt-[36px] xl:text-[38px]">
+        <p className="mt-6 text-[28px] leading-tight lg:mt-[36px] lg:text-[38px]">
           Special functions <span className="text-huddle-yellow">for your meetings</span>
         </p>
-        <p className="mt-8 max-w-[600px] text-[17px] leading-[1.42] xl:mt-[46px] xl:text-[19px]">
+        <p className="mt-8 max-w-[600px] text-[17px] leading-[1.42] lg:mt-[46px] lg:text-[19px]">
           Functions are designed to provide complete control and unmatched flexibility, helping you run secure, engaging, and profitable
           virtual stages.
         </p>
-        <ul className="mt-8 flex max-w-[470px] flex-wrap gap-x-[8px] gap-y-[6px] xl:mt-[44px]">
+        <ul className="mt-8 flex max-w-[470px] flex-wrap gap-x-[8px] gap-y-[6px] lg:mt-[44px]">
           <li className="-rotate-[5deg] rounded-full bg-huddle-yellow px-[20px] py-[9px] text-[19px] leading-[26px] text-ink">Number Picker</li>
           {FEATURE_CHIPS.map((c) => (
             <li key={c} className="rounded-full border-2 border-white px-[18px] py-[7px] text-[19px] leading-[26px]">
@@ -219,7 +219,7 @@ function Features() {
             </li>
           ))}
         </ul>
-        <Image src="/landing/plug.svg" alt="" width={303} height={370} className="mx-auto mt-12 w-[220px] xl:absolute xl:left-[840px] xl:top-[113px] xl:mt-0 xl:w-[303px]" />
+        <Image src="/landing/plug.svg" alt="" width={303} height={370} className="mx-auto mt-12 w-[220px] lg:absolute lg:left-[840px] lg:top-[113px] lg:mt-0 lg:w-[303px]" />
       </div>
     </section>
   );
@@ -227,7 +227,7 @@ function Features() {
 
 function LearnMore() {
   return (
-    <Link href="/login" className={`${pillYellow} mt-8 h-[50px] w-[152px] text-[19px] xl:mt-[44px]`}>
+    <Link href="/login" className={`${pillYellow} mt-8 h-[50px] w-[152px] text-[19px] lg:mt-[44px]`}>
       Learn more
     </Link>
   );
@@ -235,16 +235,16 @@ function LearnMore() {
 
 function RowText({ title, children }: { title: React.ReactNode; children: React.ReactNode }) {
   return (
-    <div className="max-w-[380px]">
+    <div className="max-lg:mx-auto max-lg:w-full max-lg:max-w-[551px] lg:max-w-[380px]">
       <h3 className="text-balance font-serif text-[46px] leading-[1] sm:text-[64px] sm:leading-[70px]">{title}</h3>
-      <p className="mt-6 max-w-[372px] text-[17px] leading-[1.42] xl:mt-[46px] xl:text-[20px]">{children}</p>
+      <p className="mt-6 max-w-[372px] text-[17px] leading-[1.42] lg:mt-[46px] lg:text-[20px]">{children}</p>
       <LearnMore />
     </div>
   );
 }
 
 /** The soft off-white tile that frames each feature illustration. */
-const tile = "relative mx-auto w-full max-w-[551px] rounded-[64px] bg-[#FBFAF8] xl:mx-0 xl:rounded-[80px]";
+const tile = "landing-tile relative mx-auto w-[551px] shrink-0 rounded-[80px] bg-[#FBFAF8] lg:mx-0";
 const frame = "rounded-[40px] border-2 border-ink bg-white";
 
 function LockCard() {
@@ -280,7 +280,7 @@ function NumberTile({ n, on }: { n?: number; on?: boolean }) {
 function NumbersCard() {
   return (
     <div className={`${tile} h-[615px]`}>
-      <div className={`${frame} absolute left-[53px] top-[85px] h-[445px] w-[444px] max-sm:inset-x-4 max-sm:w-auto`}>
+      <div className={`${frame} absolute left-[53px] top-[85px] h-[445px] w-[444px]`}>
         <div className="absolute left-1/2 top-[28px] -translate-x-1/2">
           <span className="absolute left-1/2 top-[68px] h-[38px] w-[124px] -translate-x-1/2 rounded-[50%] bg-[#F4F3F0]" />
           <Image src="/landing/person.png" alt="" width={62} height={95} className="relative w-[62px]" />
@@ -305,7 +305,7 @@ function NumbersCard() {
 function ChatCard() {
   return (
     <div className={`${tile} h-[615px]`}>
-      <div className={`${frame} absolute inset-x-[53px] top-[117px] h-[381px] overflow-hidden max-sm:inset-x-4`}>
+      <div className={`${frame} absolute inset-x-[53px] top-[117px] h-[381px] overflow-hidden`}>
         <div className="flex h-[88px] items-center gap-[10px] border-b border-[#F4F3F0] px-[30px]">
           <span className="h-[46px] w-[46px] rounded-full bg-[linear-gradient(180deg,#9fd3dc_0%,#cfe6ea_70%,#e9b8a6_100%)]" aria-hidden />
           <span className="text-[19px] font-medium">The Watchers Channel</span>
@@ -333,7 +333,7 @@ function CertificateCard() {
   const tiny = "text-[11px] leading-[14px] text-[#4a4a4a]";
   return (
     <div className={`${tile} h-[617px]`}>
-      <div className={`${frame} absolute inset-x-[54px] top-[119px] h-[378px] px-[52px] max-sm:inset-x-4 max-sm:px-6`}>
+      <div className={`${frame} absolute inset-x-[54px] top-[119px] h-[378px] px-[52px]`}>
         <Image src="/landing/medal.svg" alt="" width={56} height={51} className="absolute right-[34px] top-[20px] w-[56px]" />
         <p className="mt-[54px] border-b border-[#CFCFCF] pb-[6px] text-[15px] font-semibold">KLISOM Academy</p>
         <p className="mt-[18px] text-[36px] font-bold leading-[40px]">
@@ -362,7 +362,7 @@ function CertificateCard() {
             </svg>
           </div>
         </div>
-        <div className="absolute inset-x-[52px] bottom-[42px] flex justify-between max-sm:inset-x-6">
+        <div className="absolute inset-x-[52px] bottom-[42px] flex justify-between">
           <p className={tiny}>certificate number</p>
           <p className="text-[11px] font-semibold tabular-nums">JTT 108</p>
         </div>
@@ -373,30 +373,30 @@ function CertificateCard() {
 
 function FeatureRows() {
   return (
-    <section className="mx-auto max-w-[1280px] px-5 pb-[200px] pt-[120px] xl:px-[113px] xl:pt-[200px]">
-      <div className="grid items-center gap-12 xl:grid-cols-[551px_1fr] xl:gap-[131px]">
+    <section className="mx-auto max-w-[1280px] px-5 pb-[112px] pt-[96px] lg:px-[113px] lg:pb-[200px] lg:pt-[200px]">
+      <div className="grid items-center gap-10 sm:gap-12 lg:grid-cols-[551px_1fr] lg:gap-[131px]">
         <LockCard />
         <RowText title="Keep your work safe, valued, and paid">Securely gate meeting resources, documents, and videos behind a payment barrier.</RowText>
       </div>
-      <div className="mt-[120px] grid items-center gap-12 xl:mt-[155px] xl:grid-cols-[1fr_551px] xl:gap-[100px]">
-        <div className="xl:order-2">
+      <div className="mt-[88px] grid items-center gap-12 lg:mt-[155px] lg:grid-cols-[1fr_551px] lg:gap-[100px]">
+        <div className="lg:order-2">
           <NumbersCard />
         </div>
-        <div className="xl:pl-[4px]">
+        <div className="lg:pl-[4px]">
           <RowText title="Get reservations, and number allocations">
             Simplify ticket allocation. Let guests lock in their reservation and choose their preferred number instantly. This works for both{" "}
             <strong className="font-semibold">Physical</strong> and <strong className="font-semibold">Virtual</strong> meetings
           </RowText>
         </div>
       </div>
-      <div className="mt-[120px] grid items-center gap-12 xl:mt-[151px] xl:grid-cols-[551px_1fr] xl:gap-[131px]">
+      <div className="mt-[88px] grid items-center gap-12 lg:mt-[151px] lg:grid-cols-[551px_1fr] lg:gap-[131px]">
         <ChatCard />
         <RowText title="One home for discussions, Q&As, and live polls">
           Bring audience engagement into a unified forum space. Gather real-time feedback, upvote questions, and foster ongoing conversations.
         </RowText>
       </div>
-      <div className="mt-[120px] grid items-center gap-12 xl:mt-[150px] xl:grid-cols-[1fr_551px] xl:gap-[100px]">
-        <div className="xl:order-2">
+      <div className="mt-[88px] grid items-center gap-12 lg:mt-[150px] lg:grid-cols-[1fr_551px] lg:gap-[100px]">
+        <div className="lg:order-2">
           <CertificateCard />
         </div>
         <RowText title="Issue verified proof of attendance">
@@ -415,21 +415,32 @@ function StickyNote({
   title,
   body,
   width = 300,
+  stack,
   className = "",
 }: {
   color: string;
   rotate: number;
   pin?: "green" | "blue";
   width?: number;
+  /** Position in the phone pile (0 = first). The last note leaves no scroll gap after it. */
+  stack?: { index: number; last?: boolean };
   art: { src: string; w: number; h: number; className: string };
   title: string;
   body: string;
   className?: string;
 }) {
   return (
+    <>
     <div
-      className={`relative h-[305px] shrink-0 px-[16px] pt-[48px] text-center text-ink ${className}`}
-      style={{ background: color, width, transform: `rotate(${rotate}deg)` }}
+      className={`relative h-[305px] shrink-0 px-[16px] pt-[48px] text-center text-ink ${
+        stack ? `max-sm:sticky max-sm:top-[var(--pile-top)] max-sm:shadow-[0_18px_36px_-16px_rgba(26,26,26,0.4)]` : ""
+      } ${className}`}
+      style={{
+        background: color,
+        width,
+        transform: `rotate(${rotate}deg)`,
+        ...(stack ? { ["--pile-top" as string]: `${104 + stack.index * 16}px` } : {}),
+      }}
     >
       {pin && (
         <span className={`absolute top-0 ${pin === "green" ? "left-[10px]" : "right-[10px]"}`}>
@@ -448,33 +459,34 @@ function StickyNote({
       <p className="mt-[14px] text-[38px] font-bold leading-none">{title}</p>
       <p className="mx-auto mt-[16px] max-w-[268px] text-[19px] leading-[1.42]">{body}</p>
     </div>
+    {/* Phones: scroll room between pile notes. A spacer, not a margin, so every note stays pinned until the last lands. */}
+    {stack && <span aria-hidden="true" className={`hidden shrink-0 max-sm:block ${stack.last ? "h-[36vh]" : "h-[42vh]"}`} />}
+    </>
   );
 }
 
 function Benefits() {
   return (
-    <section
-      id="benefits"
-      className="relative mx-auto max-w-[1280px] scroll-mt-28 overflow-hidden bg-[#ED6A5B] px-4 py-16 xl:h-[1163px] xl:px-0 xl:py-0"
-    >
-      {/* Ruled lines of the pinboard: 13 lines, 74px apart, starting 133px down. */}
-      <div className="pointer-events-none absolute inset-x-0 top-[133px] mx-auto w-full max-w-[980px] px-4 xl:px-0" aria-hidden="true">
-        {Array.from({ length: 13 }, (_, i) => (
-          <span key={i} className="block h-[2px] bg-white/70" style={{ marginTop: i === 0 ? 0 : 72 }} />
+    <section id="benefits" className="scroll-mt-28 overflow-clip bg-[#ED6A5B]">
+      <div className="relative mx-auto max-w-[1280px] px-4 pb-20 pt-16 lg:h-[1163px] lg:px-0 lg:py-0">
+      {/* Ruled lines of the pinboard: 74px apart, starting 133px down (13 on desktop, running the full board on phones). */}
+      <div className="pointer-events-none absolute inset-x-0 top-[60px] mx-auto w-full max-w-[980px] px-4 lg:top-[133px] lg:px-0" aria-hidden="true">
+        {Array.from({ length: 42 }, (_, i) => (
+          <span key={i} className={`block h-[2px] bg-white/70 ${i >= 13 ? "lg:hidden" : ""}`} style={{ marginTop: i === 0 ? 0 : 72 }} />
         ))}
       </div>
-      <div className="pointer-events-none absolute left-[1165px] -top-[38px] hidden xl:block" aria-hidden="true">
+      <div className="pointer-events-none absolute left-[1165px] -top-[38px] hidden lg:block" aria-hidden="true">
         <Image src="/landing/pin-yellow.svg" alt="" width={142} height={135} className="w-[100px] rotate-[8deg]" />
       </div>
-      <span className="absolute left-[1179px] top-[50px] hidden h-[50px] w-[50px] rounded-full bg-white xl:block" aria-hidden="true" />
+      <span className="absolute left-[1179px] top-[50px] hidden h-[50px] w-[50px] rounded-full bg-white lg:block" aria-hidden="true" />
 
-      <div className="flex flex-col items-center gap-10 xl:block">
-        <div className="flex flex-wrap justify-center gap-6 xl:contents">
-          <StickyNote color="#F9EC84" rotate={9.5} width={292} pin="green" art={{ src: "plant", w: 89, h: 122, className: "w-[80px]" }} title="Profit" body="What you build stays valuable, not just downloadable." className="xl:absolute xl:left-[328px] xl:top-[118px]" />
-          <StickyNote color="#EBD2F9" rotate={-9.5} width={314} pin="blue" art={{ src: "music", w: 132, h: 142, className: "w-[132px] -mt-[22px]" }} title="Order" body="Reservations turn a crowd into a queue." className="xl:absolute xl:left-[647px] xl:top-[116px]" />
+      <div className="relative flex flex-col items-center gap-16 max-sm:gap-0 lg:block">
+        <div className="flex w-full max-w-[640px] flex-col items-center max-sm:contents sm:flex-row sm:justify-center lg:contents">
+          <StickyNote color="#F9EC84" rotate={9.5} width={292} pin="green" art={{ src: "plant", w: 89, h: 122, className: "w-[80px]" }} stack={{ index: 0 }} title="Profit" body="What you build stays valuable, not just downloadable." className="max-sm:scale-[0.92] lg:absolute lg:left-[328px] lg:top-[118px]" />
+          <StickyNote color="#EBD2F9" rotate={-9.5} width={314} pin="blue" art={{ src: "music", w: 132, h: 142, className: "w-[132px] -mt-[22px]" }} stack={{ index: 1 }} title="Order" body="Reservations turn a crowd into a queue." className="max-sm:scale-[0.92] sm:-ml-6 lg:absolute lg:left-[647px] lg:top-[116px] lg:ml-0" />
         </div>
 
-        <h2 className="relative text-center text-[44px] font-bold leading-[1.1] text-white xl:absolute xl:inset-x-0 xl:top-[514px] xl:text-[64px] xl:leading-[73px]">
+        <h2 className="relative text-center text-[44px] font-bold leading-[1.1] text-white max-sm:order-first max-sm:mb-14 lg:absolute lg:inset-x-0 lg:top-[514px] lg:text-[64px] lg:leading-[73px]">
           Benefits that
           <br />
           Huddle{" "}
@@ -496,10 +508,11 @@ function Benefits() {
           </span>
         </h2>
 
-        <div className="flex flex-wrap justify-center gap-6 xl:contents">
-          <StickyNote color="#ABE69E" rotate={-9.7} width={307} art={{ src: "laptop", w: 179, h: 162, className: "w-[160px] -mt-[22px]" }} title="Continuity" body="Forum Access keeps your event's community connected." className="xl:absolute xl:left-[330px] xl:top-[752px]" />
-          <StickyNote color="#BEE1E3" rotate={10} width={306} art={{ src: "hands", w: 180, h: 103, className: "w-[160px] mt-[24px]" }} title="Proof" body="A Certificate turns attendance into an achievement." className="xl:absolute xl:left-[650px] xl:top-[746px]" />
+        <div className="flex w-full max-w-[640px] flex-col items-center max-sm:contents sm:flex-row sm:justify-center lg:contents">
+          <StickyNote color="#ABE69E" rotate={-9.7} width={307} art={{ src: "laptop", w: 179, h: 162, className: "w-[160px] -mt-[22px]" }} stack={{ index: 2 }} title="Continuity" body="Forum Access keeps your event's community connected." className="max-sm:scale-[0.92] lg:absolute lg:left-[330px] lg:top-[752px]" />
+          <StickyNote color="#BEE1E3" rotate={10} width={306} art={{ src: "hands", w: 180, h: 103, className: "w-[160px] mt-[24px]" }} stack={{ index: 3, last: true }} title="Proof" body="A Certificate turns attendance into an achievement." className="max-sm:scale-[0.92] sm:-ml-6 lg:absolute lg:left-[650px] lg:top-[746px] lg:ml-0" />
         </div>
+      </div>
       </div>
     </section>
   );
@@ -508,7 +521,14 @@ function Benefits() {
 /** The hand-drawn vertical line between steps. */
 function StepLine({ after = 96 }: { after?: number }) {
   return (
-    <svg className="mx-auto mt-[140px] block" style={{ marginBottom: after }} width="6" height="190" viewBox="0 0 6 190" fill="none" aria-hidden="true">
+    <svg
+      className="mx-auto my-[48px] block h-[88px] w-[6px] lg:mb-[var(--after)] lg:mt-[140px] lg:h-[190px]"
+      style={{ ["--after" as string]: `${after}px` }}
+      viewBox="0 0 6 190"
+      preserveAspectRatio="none"
+      fill="none"
+      aria-hidden="true"
+    >
       <path d="M3 1c.6 40 .2 90 .4 140 .1 20-.3 35-.4 48" stroke="#1A1A1A" strokeWidth="2.4" strokeLinecap="round" />
     </svg>
   );
@@ -542,12 +562,12 @@ function SparkLeft({ className }: { className: string }) {
 function Step({ n, title, body, bodyWidth = 840, children }: { n: string; title: string; body: React.ReactNode; bodyWidth?: number; children?: React.ReactNode }) {
   return (
     <div className="flex flex-col items-center text-center">
-      <span className="flex h-[98px] w-[98px] items-center justify-center rounded-full border-2 border-ink bg-huddle-yellow text-[54px] font-light leading-none tracking-[-0.02em]">{n}</span>
-      <h3 className="mt-[56px] text-[32px] font-medium leading-[1.1] xl:text-[48px]">{title}</h3>
-      <p className="mt-[26px] text-[22px] leading-[1.35] xl:text-[36px]" style={{ maxWidth: bodyWidth }}>
+      <span className="flex h-[76px] w-[76px] items-center justify-center rounded-full border-2 border-ink bg-huddle-yellow text-[42px] lg:h-[98px] lg:w-[98px] lg:text-[54px] font-light leading-none tracking-[-0.02em]">{n}</span>
+      <h3 className="mt-[28px] text-balance text-[30px] font-medium leading-[1.1] sm:text-[38px] lg:mt-[56px] lg:text-[48px]">{title}</h3>
+      <p className="mt-[14px] text-pretty text-[19px] leading-[1.4] sm:text-[24px] lg:mt-[26px] lg:text-[36px] lg:leading-[1.35]" style={{ maxWidth: bodyWidth }}>
         {body}
       </p>
-      {children && <div className="mt-[140px] w-full">{children}</div>}
+      {children && <div className="mt-[48px] w-full lg:mt-[140px]">{children}</div>}
     </div>
   );
 }
@@ -558,11 +578,11 @@ const DATES = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19
 function HowItWorks() {
   const field = "flex h-[61px] w-full items-center rounded-[14px] border border-ink px-[20px] text-[16px] text-[#737373]";
   return (
-    <section id="how" className="relative mx-auto max-w-[1280px] scroll-mt-28 px-5 pt-[160px] xl:pt-[282px]">
-      <h2 className="text-center font-serif text-[52px] leading-none xl:text-[72px]">How It Works</h2>
-      <div className="relative mt-[97px]">
-        <SparkLeft className="absolute left-[100px] top-[181px] hidden xl:block" />
-        <SparkRight className="absolute left-[1045px] top-[46px] hidden xl:block" />
+    <section id="how" className="relative mx-auto max-w-[1280px] scroll-mt-28 px-5 pt-[160px] lg:pt-[282px]">
+      <h2 className="text-center font-serif text-[52px] leading-none lg:text-[72px]">How It Works</h2>
+      <div className="relative mt-[56px] lg:mt-[97px]">
+        <SparkLeft className="absolute left-[100px] top-[181px] hidden lg:block" />
+        <SparkRight className="absolute left-[1045px] top-[46px] hidden lg:block" />
         <Step n="01" title="Create your organisation" body="Set up in minutes. No sales calls, no setup fees.">
           <div className="mx-auto max-w-[550px] space-y-[26px] text-left" aria-hidden="true">
             <div className={field}>Organization name</div>
@@ -611,7 +631,7 @@ function HowItWorks() {
             { label: "Number Picker", selected: true },
             { label: "Content Protection", selected: false },
           ].map((f) => (
-            <div key={f.label} className="flex h-[82px] items-center gap-[30px] rounded-[20px] border-[1.5px] border-ink bg-huddle-yellow pl-[23px] pr-[32px]">
+            <div key={f.label} className="flex h-[72px] items-center gap-4 rounded-[20px] border-[1.5px] border-ink bg-huddle-yellow pl-4 pr-5 sm:h-[82px] sm:gap-[30px] sm:pl-[23px] sm:pr-[32px]">
               <span className="flex h-[42px] w-[42px] items-center justify-center rounded-full bg-white">
                 <svg width="20" height="16" viewBox="0 0 20 16" fill="none">
                   <path d="M2 8l5.5 6L18 2" stroke="#1A1A1A" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
@@ -619,7 +639,7 @@ function HowItWorks() {
               </span>
               <span>
                 {f.selected && <span className="block text-[9px] uppercase leading-[11px]">Selected</span>}
-                <span className="block text-[24px] leading-[28px]">{f.label}</span>
+                <span className="block text-[20px] leading-[26px] sm:text-[24px] sm:leading-[28px]">{f.label}</span>
               </span>
               {f.selected && (
                 <span className="ml-auto grid grid-cols-2 gap-[3px]">
@@ -634,11 +654,11 @@ function HowItWorks() {
       </Step>
       <StepLine after={173} />
       <Step n="04" title="Bring your people in" body="They register, reserve, engage — all in one place.">
-        <Image src="/landing/monitor.svg" alt="" width={318} height={322} className="mx-auto w-[260px] xl:w-[318px]" />
+        <Image src="/landing/monitor.svg" alt="" width={318} height={322} className="mx-auto w-[260px] lg:w-[318px]" />
       </Step>
       <StepLine after={98} />
       <Step n="05" title="Earn from what you built" body="Gate it, price it, get paid. You keep the majority.">
-        <Image src="/landing/coins.svg" alt="" width={427} height={278} className="mx-auto w-[320px] xl:w-[411px]" />
+        <Image src="/landing/coins.svg" alt="" width={427} height={278} className="mx-auto w-[320px] lg:w-[411px]" />
       </Step>
     </section>
   );
@@ -646,9 +666,9 @@ function HowItWorks() {
 
 function Pricing() {
   return (
-    <section id="pricing" className="mx-auto max-w-[1280px] scroll-mt-28 px-5 pb-[140px] pt-[200px]">
+    <section id="pricing" className="mx-auto max-w-[1280px] scroll-mt-28 px-5 pb-[96px] pt-[112px] lg:pb-[140px] lg:pt-[200px]">
       <div className="mx-auto max-w-[640px] rounded-[56px] bg-huddle-yellow px-8 py-14 text-center">
-        <h2 className="font-serif text-[52px] leading-none xl:text-[64px]">Free to start.</h2>
+        <h2 className="font-serif text-[52px] leading-none lg:text-[64px]">Free to start.</h2>
         <p className="mx-auto mt-6 max-w-[440px] text-[19px] leading-[1.42]">
           No monthly fee. When you earn, Huddle keeps 5% and your share lands in your bank account. Pro and Scale plans with lower fees are
           coming soon.
@@ -663,7 +683,7 @@ function Pricing() {
 
 function Footer() {
   return (
-    <footer className="mx-auto max-w-[1280px] rounded-t-[56px] bg-ink px-6 py-12 text-center text-[#FFFBE6] xl:rounded-t-[110px]">
+    <footer className="mx-auto max-w-[1280px] rounded-t-[56px] bg-ink px-6 py-12 text-center text-[#FFFBE6] lg:rounded-t-[110px]">
       <p className="flex items-center justify-center gap-[10px] text-[30px] font-semibold">
         <LogoMark className="h-[30px] w-auto" />
         Huddle
@@ -676,9 +696,7 @@ function Footer() {
 
 export default function Home() {
   return (
-    <div
-      className="flex-1 bg-white text-ink selection:bg-huddle-yellow selection:text-ink [&_img]:select-none"
-    >
+    <div className="landing-fit flex-1 bg-white text-ink selection:bg-huddle-yellow selection:text-ink [&_img]:select-none">
       <Nav />
       <main>
         <Hero />

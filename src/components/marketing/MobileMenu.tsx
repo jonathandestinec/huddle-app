@@ -28,7 +28,7 @@ export function MobileMenu() {
   }, [open]);
 
   return (
-    <div className="xl:hidden" data-mobile-menu>
+    <div className="lg:hidden" data-mobile-menu>
       <button
         type="button"
         aria-expanded={open}

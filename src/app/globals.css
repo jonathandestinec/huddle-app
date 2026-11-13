@@ -128,3 +128,41 @@ button {
     scroll-behavior: auto !important;
   }
 }
+
+/*
+ * Landing page fitting (no script, so nothing changes between server and client render).
+ * .landing-fit scales the 1280px desktop composition down to fit 1024-1279px screens;
+ * .landing-tile scales the 551px illustration tiles to fit phones and tablets.
+ * Each step uses the zoom for its narrowest width, so content never overflows.
+ */
+@media (min-width: 1024px) and (max-width: 1039px) { .landing-fit { zoom: 0.7867; } }
+@media (min-width: 1040px) and (max-width: 1055px) { .landing-fit { zoom: 0.7992; } }
+@media (min-width: 1056px) and (max-width: 1071px) { .landing-fit { zoom: 0.8117; } }
+@media (min-width: 1072px) and (max-width: 1087px) { .landing-fit { zoom: 0.8242; } }
+@media (min-width: 1088px) and (max-width: 1103px) { .landing-fit { zoom: 0.8367; } }
+@media (min-width: 1104px) and (max-width: 1119px) { .landing-fit { zoom: 0.8492; } }
+@media (min-width: 1120px) and (max-width: 1135px) { .landing-fit { zoom: 0.8617; } }
+@media (min-width: 1136px) and (max-width: 1151px) { .landing-fit { zoom: 0.8742; } }
+@media (min-width: 1152px) and (max-width: 1167px) { .landing-fit { zoom: 0.8867; } }
+@media (min-width: 1168px) and (max-width: 1183px) { .landing-fit { zoom: 0.8992; } }
+@media (min-width: 1184px) and (max-width: 1199px) { .landing-fit { zoom: 0.9117; } }
+@media (min-width: 1200px) and (max-width: 1215px) { .landing-fit { zoom: 0.9242; } }
+@media (min-width: 1216px) and (max-width: 1231px) { .landing-fit { zoom: 0.9367; } }
+@media (min-width: 1232px) and (max-width: 1247px) { .landing-fit { zoom: 0.9492; } }
+@media (min-width: 1248px) and (max-width: 1263px) { .landing-fit { zoom: 0.9617; } }
+@media (min-width: 1264px) and (max-width: 1279px) { .landing-fit { zoom: 0.9742; } }
+@media (min-width: 320px) and (max-width: 339px) { .landing-tile { zoom: 0.5082; } }
+@media (min-width: 340px) and (max-width: 359px) { .landing-tile { zoom: 0.5445; } }
+@media (min-width: 360px) and (max-width: 379px) { .landing-tile { zoom: 0.5808; } }
+@media (min-width: 380px) and (max-width: 399px) { .landing-tile { zoom: 0.6171; } }
+@media (min-width: 400px) and (max-width: 419px) { .landing-tile { zoom: 0.6534; } }
+@media (min-width: 420px) and (max-width: 439px) { .landing-tile { zoom: 0.6897; } }
+@media (min-width: 440px) and (max-width: 459px) { .landing-tile { zoom: 0.7260; } }
+@media (min-width: 460px) and (max-width: 479px) { .landing-tile { zoom: 0.7623; } }
+@media (min-width: 480px) and (max-width: 499px) { .landing-tile { zoom: 0.7985; } }
+@media (min-width: 500px) and (max-width: 519px) { .landing-tile { zoom: 0.8348; } }
+@media (min-width: 520px) and (max-width: 539px) { .landing-tile { zoom: 0.8711; } }
+@media (min-width: 540px) and (max-width: 559px) { .landing-tile { zoom: 0.9074; } }
+@media (min-width: 560px) and (max-width: 579px) { .landing-tile { zoom: 0.9437; } }
+@media (min-width: 580px) and (max-width: 599px) { .landing-tile { zoom: 0.9800; } }
+@media (max-width: 319px) { .landing-tile { zoom: 0.5; } }
