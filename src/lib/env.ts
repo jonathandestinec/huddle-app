@@ -10,6 +10,9 @@ const schema = z.object({
   GOOGLE_CLIENT_SECRET: z.string().min(1),
   RESEND_API_KEY: z.string().min(1),
   EMAIL_FROM: z.string().min(1),
+  /** Gmail address + app password. When both are set, email goes through Gmail SMTP instead of Resend. */
+  SMTP_USER: z.string().min(1).optional(),
+  SMTP_PASS: z.string().min(1).optional(),
   PAYSTACK_SECRET_KEY: z.string().min(1),
   PAYSTACK_PUBLIC_KEY: z.string().min(1),
   S3_ENDPOINT: url,

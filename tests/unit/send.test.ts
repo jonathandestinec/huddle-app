@@ -12,3 +12,12 @@ describe("sendEmail without a Resend key", () => {
     vi.unstubAllEnvs();
   });
 });
+
+describe("smtpFrom", () => {
+  it("keeps the display name and uses the Gmail address", async () => {
+    const { smtpFrom } = await vi.importActual<typeof import("@/lib/email/send")>("@/lib/email/send");
+    expect(smtpFrom("Huddle <onboarding@resend.dev>", "me@gmail.com")).toBe('"Huddle" <me@gmail.com>');
+    expect(smtpFrom('"Huddle Team" <x@y.com>', "me@gmail.com")).toBe('"Huddle Team" <me@gmail.com>');
+    expect(smtpFrom("hello@y.com", "me@gmail.com")).toBe("me@gmail.com");
+  });
+});
