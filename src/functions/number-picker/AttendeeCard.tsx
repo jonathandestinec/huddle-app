@@ -5,7 +5,7 @@ import { useLive } from "@/lib/realtime";
 import { formatNaira } from "@/lib/money";
 import { AttendeeShell, type ShellFunction } from "../AttendeeShell";
 import { useIdentity } from "../IdentifySheet";
-import { claimAnonymousAction, claimNumberAction } from "./actions";
+import { claimAnonymousAction, claimNumberAction, releaseMyHoldAction } from "./actions";
 import { Grid } from "./Grid";
 import type { PublicPickerState } from "./logic";
 
@@ -41,6 +41,37 @@ export function NumberPickerCard({
     if (isCalled && !wasCalled.current) playSound("ding");
     wasCalled.current = isCalled;
   }, [isCalled]);
+
+  // Coming back from Paystack without paying (browser back, or a reload of the event page):
+  // give the held number back instead of keeping it locked for 10 minutes.
+  const refreshRef = useRef(refresh);
+  useEffect(() => {
+    refreshRef.current = refresh;
+  }, [refresh]);
+  useEffect(() => {
+    if (anonymous || fn.gate !== "paid") return;
+    let alive = true;
+    const releaseHold = async () => {
+      const r = await releaseMyHoldAction(fn.id);
+      if (!alive) return;
+      setPendingNumber(null);
+      if (r.ok && r.data.status === "released") setMessage(`You didn't finish paying, so #${r.data.number} is free again.`);
+      if (r.ok && r.data.status === "processing") setMessage(`Your payment for #${r.data.number} is still processing.`);
+      refreshRef.current();
+    };
+    if (initial.mine?.status === "held") void releaseHold();
+    // Back button restores this page from the browser's cache without re-running anything else.
+    const onShow = (e: PageTransitionEvent) => {
+      if (e.persisted) void releaseHold();
+    };
+    window.addEventListener("pageshow", onShow);
+    return () => {
+      alive = false;
+      window.removeEventListener("pageshow", onShow);
+    };
+    // Mount-only: re-running on every poll would release a hold while they're on their way to pay.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   async function pick(n: number) {
     if (mine != null || ended || needsCode || busy) return;

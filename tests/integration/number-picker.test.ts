@@ -11,7 +11,9 @@ import { db } from "@/lib/db/client";
 import * as s from "@/lib/db/schema";
 import { numberPickerConfigSchema } from "@/functions/number-picker/config";
 import { claimNumber, getPickerState, sweepExpiredHolds } from "@/functions/number-picker/logic";
+import { releaseHoldForReference, releaseMyHold } from "@/functions/number-picker/release";
 import { settlePayment } from "@/lib/payments/settle";
+import { initializeTransaction, verifyTransaction } from "@/lib/paystack/client";
 import { makeEvent, makeFunction, makeOrg, makeUser, resetDb } from "./setup";
 
 async function picker(overrides: Parameters<typeof makeFunction>[1] = {}, eventOverrides = {}) {
@@ -89,6 +91,73 @@ describe("claimNumber (paid)", () => {
     await claimNumber(u.id, f.id, 42);
     expect(await claimNumber(u.id, f.id, 43)).toMatchObject({ ok: true, status: "held" });
     expect((await claimsFor(f.id)).map((c) => c.number)).toEqual([43]);
+  });
+});
+
+describe("releasing an unpaid hold", () => {
+  beforeEach(resetDb);
+  const verify = () => vi.mocked(verifyTransaction);
+
+  it("back without paying: the number is free again and the payment is abandoned", async () => {
+    const f = await picker(paid);
+    const [u, other] = [await makeUser(), await makeUser()];
+    await claimNumber(u.id, f.id, 42);
+    verify().mockResolvedValueOnce({ status: "abandoned", amountKobo: 100000, reference: "x" });
+    expect(await releaseMyHold(u.id, f.id)).toEqual({ status: "released", number: 42 });
+    expect(await claimsFor(f.id)).toHaveLength(0);
+    expect((await refFor(f.id, u.id)).status).toBe("abandoned");
+    expect(await claimNumber(other.id, f.id, 42)).toMatchObject({ ok: true, status: "held" });
+  });
+
+  it("paid after all: confirms the number instead of releasing it", async () => {
+    const f = await picker(paid);
+    const u = await makeUser();
+    await claimNumber(u.id, f.id, 42);
+    expect(await releaseMyHold(u.id, f.id)).toEqual({ status: "paid", number: 42 });
+    expect(await claimsFor(f.id)).toMatchObject([{ number: 42, status: "confirmed" }]);
+  });
+
+  it("still processing (e.g. bank transfer): keeps the hold", async () => {
+    const f = await picker(paid);
+    const u = await makeUser();
+    await claimNumber(u.id, f.id, 42);
+    verify().mockResolvedValueOnce({ status: "ongoing", amountKobo: 100000, reference: "x" });
+    expect(await releaseMyHold(u.id, f.id)).toEqual({ status: "processing", number: 42 });
+    expect(await claimsFor(f.id)).toMatchObject([{ number: 42, status: "held" }]);
+  });
+
+  it("Paystack unreachable: keeps the hold", async () => {
+    const f = await picker(paid);
+    const u = await makeUser();
+    await claimNumber(u.id, f.id, 42);
+    verify().mockRejectedValueOnce(new Error("down"));
+    expect(await releaseMyHold(u.id, f.id)).toEqual({ status: "processing", number: 42 });
+    expect(await claimsFor(f.id)).toHaveLength(1);
+  });
+
+  it("Cancel payment on checkout releases by reference", async () => {
+    const f = await picker(paid);
+    const u = await makeUser();
+    await claimNumber(u.id, f.id, 42);
+    verify().mockResolvedValueOnce({ status: "abandoned", amountKobo: 100000, reference: "x" });
+    expect(await releaseHoldForReference((await refFor(f.id, u.id)).paystackReference)).toEqual({ status: "released", number: 42 });
+    expect(await claimsFor(f.id)).toHaveLength(0);
+  });
+
+  it("does nothing to confirmed numbers or people with no hold", async () => {
+    const f = await picker();
+    const u = await makeUser();
+    await claimNumber(u.id, f.id, 7);
+    expect(await releaseMyHold(u.id, f.id)).toEqual({ status: "none" });
+    expect(await releaseMyHold((await makeUser()).id, f.id)).toEqual({ status: "none" });
+    expect(await claimsFor(f.id)).toHaveLength(1);
+  });
+
+  it("asks Paystack to send Cancel payment back to the return page", async () => {
+    const f = await picker(paid);
+    await claimNumber((await makeUser()).id, f.id, 42);
+    const meta = vi.mocked(initializeTransaction).mock.calls.at(-1)![0].metadata;
+    expect(meta.cancel_action).toMatch(/\/paid\?ref=hud_[0-9a-f]+&cancelled=1$/);
   });
 });
 

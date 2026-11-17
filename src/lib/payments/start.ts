@@ -40,14 +40,16 @@ export async function startPaidUnlock(
     metadata,
   });
 
+  const returnUrl = `${getEnv().APP_URL}/${org.slug}/${event.slug}/paid?ref=${reference}`;
   const { authorizationUrl } = await initializeTransaction({
     email: u.email,
     amountKobo: fn.priceKobo,
     reference,
-    callbackUrl: `${getEnv().APP_URL}/${org.slug}/${event.slug}/paid?ref=${reference}`,
+    callbackUrl: returnUrl,
     subaccount: org.paystackSubaccountCode,
     transactionChargeKobo: fee,
-    metadata: { ...metadata, functionId, huddle: true },
+    // cancel_action: where Paystack's "Cancel payment" sends them. The return page releases the hold.
+    metadata: { ...metadata, functionId, huddle: true, cancel_action: `${returnUrl}&cancelled=1` },
   });
   // Kept so a re-pick can reuse this checkout instead of opening a second charge.
   await db
