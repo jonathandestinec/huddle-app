@@ -5,7 +5,7 @@ import { settlePayment } from "@/lib/payments/settle";
 
 export default async function PaidPage({ params, searchParams }: PageProps<"/[org]/[event]/paid">) {
   const { org, event } = await params;
-  const { ref } = await searchParams;
+  const { ref, cancelled } = await searchParams;
   const back = `/${org}/${event}`;
   const result = typeof ref === "string" && ref.startsWith("hud_") ? await settlePayment(ref, "verify").catch(() => "error" as const) : "error";
   const ok = result === "settled" || result === "already_settled";
@@ -31,6 +31,11 @@ export default async function PaidPage({ params, searchParams }: PageProps<"/[or
           <p className="mt-2 max-w-sm text-slate">
             You weren&apos;t charged, and #{released.number} is free again. Head back to pick a number whenever you&apos;re ready.
           </p>
+        </>
+      ) : cancelled === "1" && released.status === "none" ? (
+        <>
+          <h1 className="mt-6 font-serif text-4xl">Payment cancelled</h1>
+          <p className="mt-2 max-w-sm text-slate">You weren&apos;t charged. Head back whenever you&apos;re ready to try again.</p>
         </>
       ) : (
         <>

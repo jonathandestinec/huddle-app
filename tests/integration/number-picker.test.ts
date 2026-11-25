@@ -117,11 +117,30 @@ describe("releasing an unpaid hold", () => {
     expect(await claimsFor(f.id)).toMatchObject([{ number: 42, status: "confirmed" }]);
   });
 
-  it("still processing (e.g. bank transfer): keeps the hold", async () => {
+  it("started paying then closed checkout (Paystack 'ongoing'): releases", async () => {
     const f = await picker(paid);
     const u = await makeUser();
     await claimNumber(u.id, f.id, 42);
     verify().mockResolvedValueOnce({ status: "ongoing", amountKobo: 100000, reference: "x" });
+    expect(await releaseMyHold(u.id, f.id)).toEqual({ status: "released", number: 42 });
+    expect(await claimsFor(f.id)).toHaveLength(0);
+  });
+
+  it("closed checkout, then paid late anyway: still gets the number if it's free", async () => {
+    const f = await picker(paid);
+    const u = await makeUser();
+    await claimNumber(u.id, f.id, 42);
+    verify().mockResolvedValueOnce({ status: "ongoing", amountKobo: 100000, reference: "x" });
+    await releaseMyHold(u.id, f.id);
+    await settlePayment((await refFor(f.id, u.id)).paystackReference, "webhook");
+    expect(await claimsFor(f.id)).toMatchObject([{ number: 42, status: "confirmed", userId: u.id }]);
+  });
+
+  it("still processing (e.g. bank transfer): keeps the hold", async () => {
+    const f = await picker(paid);
+    const u = await makeUser();
+    await claimNumber(u.id, f.id, 42);
+    verify().mockResolvedValueOnce({ status: "pending", amountKobo: 100000, reference: "x" });
     expect(await releaseMyHold(u.id, f.id)).toEqual({ status: "processing", number: 42 });
     expect(await claimsFor(f.id)).toMatchObject([{ number: 42, status: "held" }]);
   });

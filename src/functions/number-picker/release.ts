@@ -12,8 +12,13 @@ import { verifyTransaction } from "@/lib/paystack/client";
  */
 export type ReleaseResult = { status: "released" | "paid" | "processing"; number: number } | { status: "none" };
 
-/** Paystack statuses that mean "this checkout will not be paid". */
-const DEAD = new Set(["abandoned", "failed", "reversed"]);
+/**
+ * Paystack statuses where money may genuinely still be on its way, so the hold stays.
+ * Everything else that isn't "success" — abandoned, failed, reversed, and "ongoing" (they started,
+ * e.g. opened the bank option, then closed checkout) — releases. If an "ongoing" one is somehow
+ * finished later, settlement still gives them the number back if it's free, or access to pick another.
+ */
+const IN_FLIGHT = new Set(["pending", "processing", "queued"]);
 
 async function release(claim: { id: string; number: number }, reference: string | null): Promise<ReleaseResult> {
   if (reference) {
@@ -29,7 +34,7 @@ async function release(claim: { id: string; number: number }, reference: string 
       await settlePayment(reference, "verify");
       return { status: "paid", number: claim.number };
     }
-    if (!DEAD.has(status)) return { status: "processing", number: claim.number };
+    if (IN_FLIGHT.has(status)) return { status: "processing", number: claim.number };
   }
 
   await db.transaction(async (tx) => {
